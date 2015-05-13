@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.github.sdedwards.m2e-nar</groupId>
+		<artifactId>m2e-nar</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>com.github.sdedwards.m2e-nar.test</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+
+	<name>Maven Integration for Eclipse CDT (tests)</name>
+
+  <properties>
+    <invoker.debug>false</invoker.debug>
+    <its.to.skip>dummy</its.to.skip>
+    <skip.autoconf.it>it0013-gnu-executable/**</skip.autoconf.it>
+    <skip.fortran.it>it0018-fortran/**</skip.fortran.it>
+    <skip.toolchain.it>it0017-toolchain/**</skip.toolchain.it>
+  </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.9</version>
+            <configuration>
+              <projectsDirectory>it</projectsDirectory>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <debug>${invoker.debug}</debug>
+              <ignoreFailures>false</ignoreFailures>
+              <pomIncludes>
+                <!-- special for mvn 3 (see below) -->
+                <pomInclude>it-parent/pom.xml</pomInclude>
+                <pomInclude>it0003-jni/pom.xml</pomInclude>
+                <pomInclude>it0007-lib-shared/pom.xml</pomInclude>
+                <pomInclude>it0010-lib-static/pom.xml</pomInclude>
+                <pomInclude>it0020-lib-3rdparty/pom.xml</pomInclude>
+              </pomIncludes>
+              <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+              <settingsFile>it/settings.xml</settingsFile>
+              <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+                <goal>clean</goal>
+              </goals>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<argLine>-Dm2e_nar.settings=m2e-settings.xml -Dm2e_nar.itPath=target/it</argLine>
+					<product>org.eclipse.platform.ide</product>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<excludes>
+						<exclude>**/It0006Test*</exclude>
+					</excludes>
+					<bundleStartLevel>
+						<bundle>
+							<id>org.eclipse.m2e.logback.configuration</id>
+							<level>4</level>
+							<autoStart>true</autoStart>
+						</bundle>
+					</bundleStartLevel>
+				</configuration>
+			</plugin>
+        </plugins>
+      </build>
+</project>

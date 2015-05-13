@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: m2e-nar-test
+Bundle-SymbolicName: com.github.sdedwards.m2e-nar.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: sdedwards
+Fragment-Host: com.github.sdedwards.m2e-nar;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit,
+ org.eclipse.cdt.managedbuilder.gnu.ui,
+ org.eclipse.m2e.lifecyclemapping.defaults,
+ org.eclipse.m2e.logback.configuration

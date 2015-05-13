@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lifecycleMappingMetadata>
+  <lifecycleMappings>
+
+    <lifecycleMapping>
+      <packagingType>nar</packagingType>
+      <lifecycleMappingId>com.github.sdedwards.m2e_nar.NarLifecycleMapping</lifecycleMappingId>
+	  <pluginExecutions>
+	    <pluginExecution>
+	      <pluginExecutionFilter>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <versionRange>[2.0,)</versionRange>
+	        <goals>
+	          <goal>compile</goal>
+	          <goal>testCompile</goal>
+	        </goals>
+	      </pluginExecutionFilter>
+	      <action>
+	        <configurator>
+	          <id>com.github.sdedwards.m2e_nar.cConfigurator</id>
+	        </configurator>
+	      </action>
+	    </pluginExecution>
+	  </pluginExecutions>
+    </lifecycleMapping>
+  </lifecycleMappings>
+
+  <pluginExecutions>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <groupId>com.github.maven-nar</groupId>
+        <artifactId>nar-maven-plugin</artifactId>
+        <versionRange>[3.0.0-rc1,)</versionRange>
+        <goals>
+          <goal>nar-validate</goal>
+          <goal>nar-download</goal>
+          <goal>nar-unpack</goal>
+          <goal>nar-gnu-configure</goal>
+          <goal>nar-system-generate</goal>
+          <goal>nar-resources</goal>
+          <goal>nar-gnu-resources</goal>
+          <goal>nar-vcproj</goal>
+          <goal>nar-javah</goal>
+          <goal>nar-gnu-make</goal>
+          <goal>nar-compile</goal>
+          <goal>nar-gnu-process</goal>
+          <goal>nar-process-libraries</goal>
+          <goal>nar-testDownload</goal>
+          <goal>nar-testUnpack</goal>
+          <goal>nar-testCompile</goal>
+          <goal>nar-test</goal>
+        </goals>
+        <!--
+        <parameters>
+          <compilerId>javac</compilerId>
+        </parameters>-->
+      </pluginExecutionFilter>
+      <action>
+        <configurator>
+          <id>com.github.sdedwards.m2e_nar.cConfigurator</id>
+        </configurator>
+      </action>
+    </pluginExecution>
+  </pluginExecutions>
+</lifecycleMappingMetadata>

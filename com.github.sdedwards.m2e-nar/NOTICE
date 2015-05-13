@@ -1,0 +1,7 @@
+NAR Maven Plugin Integration for Eclipse
+Copyright 2015 Stephen Edwards
+
+Portions of this code -- specifically, most of the com.github.maven_nar
+package -- were adapted from the nar-maven-plugin open source project
+(http://maven-nar.github.io/)
+

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.forge</groupId>
+		<artifactId>forge-parent</artifactId>
+		<version>10</version>
+	</parent>
+
+	<groupId>com.github.sdedwards.m2e-nar</groupId>
+	<artifactId>m2e-nar</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>NAR Maven Plugin Integration for Eclipse (parent)</name>
+	<description>m2e-nar - m2e extention for nar-maven-plugin for configuring CDT</description>
+	<url>http://github.com/sdedwards</url>
+	<inceptionYear>2014</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Stephen Edwards</name>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>reddsaw</id>
+			<name>Stephen Edwards</name>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+
+	<issueManagement>
+	</issueManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tycho-version>0.22.0</tycho-version>
+		<eclipse-repo.url>http://download.eclipse.org/releases/kepler</eclipse-repo.url>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>eclipse</id>
+			<layout>p2</layout>
+			<url>${eclipse-repo.url}</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>com.github.sdedwards.m2e-nar</module>
+		<module>com.github.sdedwards.m2e-nar.tests</module>
+		<module>com.github.sdedwards.m2e-nar.feature</module>
+		<module>com.github.sdedwards.m2e-nar.repo</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.7</version>
+					<configuration>
+						<licenseName>apache_v2</licenseName>
+						<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+						<licenseFile>${project.basedir}/LICENSE</licenseFile>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

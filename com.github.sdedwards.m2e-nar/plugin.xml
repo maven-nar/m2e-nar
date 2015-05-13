@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.m2e.core.lifecycleMappings">
+      <lifecycleMapping
+            class="com.github.sdedwards.m2e_nar.internal.NarLifecycleMapping"
+            id="com.github.sdedwards.m2e_nar.NarLifecycleMapping"
+            name="Nar Lifecycle Mapping">
+      </lifecycleMapping>
+   </extension>
+   <extension
+         point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
+   </extension>
+   <extension
+         point="org.eclipse.m2e.core.projectConfigurators">
+      <configurator
+            class="com.github.sdedwards.m2e_nar.internal.CProjectConfigurator"
+            id="com.github.sdedwards.m2e_nar.cConfigurator"
+            name="CDT">
+      </configurator>
+   </extension>
+
+</plugin>
