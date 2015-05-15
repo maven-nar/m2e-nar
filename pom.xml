@@ -121,9 +121,6 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<useReleaseProfile>true</useReleaseProfile>
-						<goals>deploy</goals>
-						<arguments></arguments>
 					</configuration>
 				</plugin>
 				<plugin>
