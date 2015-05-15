@@ -157,9 +157,9 @@ under the License.
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.1</version>
                     <configuration>
-                        <!--  here to prevent hang see MGPG-9 -->
-                        <mavenExecutorId>forked-path</mavenExecutorId>
                         <goals>deploy</goals>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
                 <plugin>
