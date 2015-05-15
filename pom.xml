@@ -15,8 +15,8 @@
 	<packaging>pom</packaging>
 
 	<name>NAR Maven Plugin Integration for Eclipse (parent)</name>
-	<description>m2e-nar - m2e extention for nar-maven-plugin for configuring CDT</description>
-	<url>http://github.com/sdedwards</url>
+	<description>m2e-nar - m2e connector for nar-maven-plugin for configuring CDT</description>
+	<url>http://github.com/sdedwards/m2e-nar</url>
 	<inceptionYear>2014</inceptionYear>
 
 	<licenses>
@@ -34,14 +34,27 @@
 
 	<developers>
 		<developer>
-			<id>reddsaw</id>
+			<id>sdedwards</id>
 			<name>Stephen Edwards</name>
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
 
+	<scm>
+		<connection>scm:git:git@github.com:sdedwards/m2e-nar.git</connection>
+		<url>scm:git:git@github.com:sdedwards/m2e-nar.git</url>
+		<developerConnection>scm:git:git@github.com:sdedwards/m2e-nar.git</developerConnection>
+	</scm>
+
 	<issueManagement>
 	</issueManagement>
+
+	<distributionManagement>
+		<repository>
+		</repository>
+		<snapshotRepository>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,6 +85,13 @@
 				<version>${tycho-version}</version>
 				<extensions>true</extensions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -93,6 +113,24 @@
 						<licenseName>apache_v2</licenseName>
 						<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
 						<licenseFile>${project.basedir}/LICENSE</licenseFile>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>de.jutzig</groupId>
+					<artifactId>github-release-plugin</artifactId>
+					<version>1.1.1</version>
+					<configuration>
+						<description>Eclispe update site</description>
+						<releaseName>v${project.version}</releaseName>
+						<tag>v${project.version}</tag>
 					</configuration>
 				</plugin>
 			</plugins>
