@@ -21,7 +21,7 @@ under the License.
 
 	<groupId>com.github.sdedwards.m2e-nar</groupId>
 	<artifactId>m2e-nar</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>NAR Maven Plugin Integration for Eclipse (parent)</name>
@@ -238,10 +238,24 @@ under the License.
 					<artifactId>github-release-plugin</artifactId>
 					<version>1.1.1</version>
 					<configuration>
-						<description>Eclispe update site</description>
+						<description>First try at release</description>
 						<releaseName>v${project.version}</releaseName>
 						<tag>v${project.version}</tag>
+						<repositoryId>sdedwards/m2e-nar</repositoryId>
 					</configuration>
+					<executions>
+						<execution>
+							<id>github-release</id>
+							<goals>
+								<goal>release</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho-version}</version>
 				</plugin>
             </plugins>
         </pluginManagement>
