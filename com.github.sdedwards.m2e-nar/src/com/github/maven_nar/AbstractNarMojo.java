@@ -100,6 +100,12 @@ public abstract class AbstractNarMojo
     private File outputDirectory;
 
     /**
+     * @parameter property="project.build.outputDirectory"
+     * @readonly
+     */
+    protected File classesDirectory;
+
+    /**
      * Name of the output
      *  - for jni default-value="${project.artifactId}-${project.version}"
      *  - for libs default-value="${project.artifactId}-${project.version}"
@@ -354,9 +360,15 @@ public abstract class AbstractNarMojo
 	    {
 	    	String groupId = getMavenProject().getGroupId();
 	    	String artifactId = getMavenProject().getArtifactId();
-	    	
-	        File propertiesDir = new File( getMavenProject().getBasedir(), "src/main/resources/META-INF/nar/" + groupId + "/" + artifactId );
-	        File propertiesFile = new File( propertiesDir, NarInfo.NAR_PROPERTIES );
+            String path = "META-INF/nar/" + groupId + "/" + artifactId + "/" + NarInfo.NAR_PROPERTIES;
+            File propertiesFile = null;
+            if (classesDirectory != null) {
+                propertiesFile = new File( classesDirectory, path );
+            }
+            // should not need to try and read from source.
+            if( propertiesFile == null || !propertiesFile.exists() ){
+                propertiesFile = new File( getMavenProject().getBasedir(), "src/main/resources/" + path);
+            }
 	
 	        narInfo = new NarInfo( 
 	            groupId, artifactId,
