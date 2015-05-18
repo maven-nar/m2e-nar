@@ -74,6 +74,8 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 					ILibrary library = (ILibrary) iter.next();
 					NarBuildArtifact buildArtifact = buildArtifactSettings(library.getType(), buildType, library.linkCPP(), null);
 					buildArtifact.setArtifactName(narCompileMojo.getOutput(library.getType()));
+					buildArtifact.setConfigName(CdtUtils.getConfigName(
+							mojoExecution, buildArtifact));
 					artifactSettings.add(buildArtifact);
 				}
 			}
@@ -83,6 +85,8 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 					ITest test = (ITest) iter.next();
 					NarBuildArtifact buildArtifact = buildArtifactSettings(NarBuildArtifact.EXECUTABLE, buildType, true, test);
 					buildArtifact.setArtifactName(test.getName());
+					buildArtifact.setConfigName(CdtUtils.getTestConfigName(
+							mojoExecution, buildArtifact));
 					artifactSettings.add(buildArtifact);
 				}
 			}
@@ -107,13 +111,6 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		NarBuildArtifact settings = new NarBuildArtifact();
 		
 		settings.setType(type);
-		if (test == null) {
-			settings.setConfigName(CdtUtils.getConfigName(
-					mojoExecution, settings));
-		} else {
-			settings.setConfigName(CdtUtils.getTestConfigName(
-					mojoExecution, settings));
-		}
 		
 		List<String> projectRefs = settings.getProjectReferences();
 		List<com.github.maven_nar.NarArtifact> narArtifacts = narCompileMojo.getNarArtifacts();
