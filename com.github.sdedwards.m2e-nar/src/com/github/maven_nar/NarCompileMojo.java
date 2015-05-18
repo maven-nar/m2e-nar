@@ -22,19 +22,12 @@
  */
 package com.github.maven_nar;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Compiles native source files.
@@ -49,12 +42,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class NarCompileMojo extends AbstractCompileMojo
 {
     /**
-     * @parameter default-value="${project.build.directory}/classes"
-     * @readonly
-     */
-    private File outputDirectory;
-
-    /**
      * The current build session instance.
      * 
      * @parameter default-value="${session}"
@@ -63,4 +50,14 @@ public class NarCompileMojo extends AbstractCompileMojo
      */
     protected MavenSession session;
 
+    protected List<Artifact> getArtifacts() {
+        final Set<Artifact> artifacts = getMavenProject().getArtifacts();
+        List<Artifact> returnArtifact = new ArrayList<Artifact>();
+        for(Artifact a : artifacts) {
+        	if (Artifact.SCOPE_COMPILE.equals(a.getScope()) || Artifact.SCOPE_PROVIDED.equals(a.getScope()) || Artifact.SCOPE_SYSTEM.equals(a.getScope())) {
+        		returnArtifact.add(a);
+        	}
+        }
+        return returnArtifact;
+    }    
 }

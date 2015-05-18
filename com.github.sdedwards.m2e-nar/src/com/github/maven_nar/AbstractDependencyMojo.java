@@ -95,16 +95,8 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		return remoteArtifactRepositories;
 	}
 
-    protected List<Artifact> getArtifacts() {
-    	// Get all artifacts based on the dependency resolution of the mojo
-        Set<Artifact> artifacts = getMavenProject().getArtifacts();
-        List<Artifact> returnArtifact = new ArrayList<Artifact>();
-        for(Artifact a : artifacts) {
-            returnArtifact.add(a);
-        }
-        return returnArtifact;
-    }
-
+    protected abstract List<Artifact> getArtifacts();
+    
 	/**
 	 * Returns dependencies which are dependent on NAR files (i.e. contain
 	 * NarInfo)

@@ -22,6 +22,12 @@
  */
 package com.github.maven_nar;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+
 /**
  * Compiles native test source files.
  *
@@ -41,4 +47,12 @@ public class NarTestCompileMojo
      */
     protected boolean skipNar;
 
+    protected List<Artifact> getArtifacts() {
+        final Set<Artifact> artifacts = getMavenProject().getArtifacts();
+        List<Artifact> returnArtifact = new ArrayList<Artifact>();
+        for(Artifact a : artifacts) {
+        	returnArtifact.add(a);
+        }
+        return returnArtifact;
+    }    
 }
