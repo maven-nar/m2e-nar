@@ -187,10 +187,13 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 			return null;
 		} else if ("nar-testDownload".equals(goal)) {
 			return new MojoExecutionBuildParticipant(execution, false, true);
-		} else if ("nar-testUnpack".equals(goal)) {
+		} else if (MavenUtils.isTestUnpack(goal)) {
 			return new NarBuildParticipant(execution, false, true);
 		} else if ("nar-testCompile".equals(goal)) {
-			return null;
+			// Note that this does not actually compile the tests, only unpacks
+			// test dependencies for compatibility with older versions of
+			// nar-maven-plugin
+			return new NarTestCompileBuildParticipant(execution, false, true);
 		} else if ("nar-test".equals(goal)) {
 			return null;
 		}

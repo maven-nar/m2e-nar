@@ -48,6 +48,7 @@
           <goal>nar-process-libraries</goal>
           <goal>nar-testDownload</goal>
           <goal>nar-testUnpack</goal>
+          <goal>nar-test-unpack</goal>
           <goal>nar-testCompile</goal>
           <goal>nar-test</goal>
         </goals>

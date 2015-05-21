@@ -71,6 +71,9 @@ public final class MavenUtils {
 	public static String NAR_COMPILE_GOAL = "nar-compile";
 	public static String NAR_TESTCOMPILE_GOAL = "nar-testCompile";
 	
+	public static String NAR_TESTUNPACK_GOAL = "nar-testUnpack";
+	public static String NAR_TEST_UNPACK_GOAL = "nar-test-unpack";
+	
 	private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
 	private static ClassRealm realm = null;
 
@@ -131,7 +134,7 @@ public final class MavenUtils {
 				}, monitor);
 	}
 
-	public static <T extends AbstractMojo> T getConfiguredMojo(MavenSession session,
+	private static <T extends AbstractMojo> T getConfiguredMojo(MavenSession session,
 			MojoExecution mojoExecution, Class<T> asType, Log log) throws CoreException {
 		MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
 
@@ -356,4 +359,9 @@ public final class MavenUtils {
 		}
 		return narExecutions;
 	}
+	
+	public static boolean isTestUnpack(String goal) {
+		return NAR_TESTUNPACK_GOAL.equals(goal) || NAR_TEST_UNPACK_GOAL.equals(goal);
+	}
+	
 }
