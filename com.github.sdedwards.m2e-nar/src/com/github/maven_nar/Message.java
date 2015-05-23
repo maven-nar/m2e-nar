@@ -24,15 +24,11 @@ package com.github.maven_nar;
  * 
  * @author Greg Domjan
  */
-public class Message
-    extends Compiler
-{
-    public Message()
-    {
-    }
+public class Message extends Compiler {
+	public Message() {
+	}
 
-    public final String getLanguage()
-    {
-        return "mc";
-    }
+	public final String getLanguage() {
+		return "mc";
+	}
 }

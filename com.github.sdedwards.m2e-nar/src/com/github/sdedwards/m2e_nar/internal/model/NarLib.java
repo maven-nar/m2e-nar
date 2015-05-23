@@ -24,12 +24,14 @@ import java.io.File;
 public class NarLib {
 
 	private String name;
-	
+
 	private String type;
 
 	private File directory;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLibSettings#getName()
 	 */
 	public String getName() {
@@ -40,7 +42,9 @@ public class NarLib {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLibSettings#getType()
 	 */
 	public String getType() {
@@ -51,7 +55,9 @@ public class NarLib {
 		this.type = type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLibSettings#getDirectory()
 	 */
 	public File getDirectory() {

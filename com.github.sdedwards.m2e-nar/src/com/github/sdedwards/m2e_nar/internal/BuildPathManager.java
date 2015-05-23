@@ -55,8 +55,7 @@ public class BuildPathManager implements IMavenProjectChangedListener {
 	}
 
 	@Override
-	public void mavenProjectChanged(MavenProjectChangedEvent[] events,
-			IProgressMonitor monitor) {
+	public void mavenProjectChanged(MavenProjectChangedEvent[] events, IProgressMonitor monitor) {
 		monitor.setTaskName(Messages.BuildPathManager_setting_paths);
 		final Set<IProject> projects = new HashSet<IProject>();
 		for (final MavenProjectChangedEvent event : events) {
@@ -64,8 +63,7 @@ public class BuildPathManager implements IMavenProjectChangedListener {
 			if (project.isAccessible() && projects.add(project)) {
 				try {
 					updateBuildPaths(project, monitor);
-				}
-				catch (final CoreException e) {
+				} catch (final CoreException e) {
 					MavenNarPlugin.getDefault().logError("Problem when updating build paths", e);
 				}
 			}
@@ -75,24 +73,19 @@ public class BuildPathManager implements IMavenProjectChangedListener {
 	private void updateBuildPaths(IProject project, IProgressMonitor monitor) throws CoreException {
 		final IMavenProjectFacade facade = projectManager.getProject(project);
 		if (facade != null) {
-			final ICProjectDescriptionManager mngr = CoreModel.getDefault()
-					.getProjectDescriptionManager();
-			final ICProjectDescription des = mngr.getProjectDescription(project,
-					true);
+			final ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+			final ICProjectDescription des = mngr.getProjectDescription(project, true);
 			if (des != null) {
 				boolean changed = false;
 				logger.debug("updateBuildPaths: project=" + project.getName());
 				final ConfiguratorContext context = new ConfiguratorContext(MavenPlugin.getMaven(), projectManager);
-				List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context,
-							facade, monitor);
-				narExecutions.addAll(MavenUtils.buildTestCompileNarExecutions(context,
-							facade, monitor));
+				List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context, facade, monitor);
+				narExecutions.addAll(MavenUtils.buildTestCompileNarExecutions(context, facade, monitor));
 				for (NarExecution narSettings : narExecutions) {
 					if (!narSettings.isSkip()) {
 						final String os = narSettings.getOS();
 						final String linkerName = narSettings.getLinkerName();
-						final AbstractSettingsSynchroniser synchro = SynchroniserFactory.getSettingsSynchroniser(
-								os, linkerName);
+						final AbstractSettingsSynchroniser synchro = SynchroniserFactory.getSettingsSynchroniser(os, linkerName);
 						changed = updateCdtBuildPaths(des, synchro, narSettings);
 					}
 				}
@@ -103,19 +96,17 @@ public class BuildPathManager implements IMavenProjectChangedListener {
 		}
 	}
 
-	private boolean updateCdtBuildPaths(final ICProjectDescription des, final SettingsSynchroniser synchro,
-			final NarExecution narSettings) throws CoreException {
+	private boolean updateCdtBuildPaths(final ICProjectDescription des, final SettingsSynchroniser synchro, final NarExecution narSettings)
+			throws CoreException {
 		boolean changed = false;
-		for (NarBuildArtifact artifactSettings : narSettings
-				.getArtifactSettings()) {
+		for (NarBuildArtifact artifactSettings : narSettings.getArtifactSettings()) {
 			final String configName = artifactSettings.getConfigName();
 			final ICConfigurationDescription cfg = des.getConfigurationByName(configName);
 			if (cfg != null) {
 				logger.debug("updateBuildPaths: updating config " + configName);
 				synchro.pathsOnlySync(cfg, artifactSettings);
 				changed = true;
-			}
-			else {
+			} else {
 				logger.debug("updateBuildPaths: could not find config " + configName);
 			}
 		}

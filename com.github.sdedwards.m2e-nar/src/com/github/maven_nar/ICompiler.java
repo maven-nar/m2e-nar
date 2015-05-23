@@ -27,8 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 public interface ICompiler {
 
-	public abstract String getName() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract String getName() throws MojoFailureException, MojoExecutionException;
 
 	public abstract List/* <File> */getSourceDirectories(String type);
 
@@ -36,11 +35,9 @@ public interface ICompiler {
 
 	public abstract List/* <String> */getSystemIncludePaths();
 
-	public abstract Set getIncludes(String type) throws MojoFailureException,
-			MojoExecutionException;
+	public abstract Set getIncludes(String type) throws MojoFailureException, MojoExecutionException;
 
-	public abstract Set getExcludes(String type, ITest currentTest) throws MojoFailureException,
-			MojoExecutionException;
+	public abstract Set getExcludes(String type, ITest currentTest) throws MojoFailureException, MojoExecutionException;
 
 	public abstract boolean isDebug();
 
@@ -50,14 +47,11 @@ public interface ICompiler {
 
 	public abstract boolean isMultiThreaded();
 
-	public abstract List getDefines() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getDefines() throws MojoFailureException, MojoExecutionException;
 
-	public abstract List getUndefines() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getUndefines() throws MojoFailureException, MojoExecutionException;
 
-	public abstract List getOptions() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getOptions() throws MojoFailureException, MojoExecutionException;
 
 	public abstract boolean isExceptions();
 

@@ -22,14 +22,13 @@ package com.github.maven_nar;
 /**
  * @author Mark Donszelmann
  */
-public interface OS
-{
+public interface OS {
 
-    String MACOSX = "MacOSX";
+	String MACOSX = "MacOSX";
 
-    String WINDOWS = "Windows";
+	String WINDOWS = "Windows";
 
-    String LINUX = "Linux";
+	String LINUX = "Linux";
 
-    String SUNOS = "SunOS";
+	String SUNOS = "SunOS";
 }

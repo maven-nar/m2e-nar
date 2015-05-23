@@ -24,10 +24,9 @@ import java.util.List;
 /**
  * @author Mark Donszelmann (Mark.Donszelmann@gmail.com)
  */
-public interface Executable
-{
+public interface Executable {
 
-    boolean shouldRun();
+	boolean shouldRun();
 
-    List/* <String> */getArgs();
+	List/* <String> */getArgs();
 }

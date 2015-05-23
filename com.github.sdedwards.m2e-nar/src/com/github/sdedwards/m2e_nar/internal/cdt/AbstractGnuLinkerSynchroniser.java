@@ -34,21 +34,21 @@ import com.github.sdedwards.m2e_nar.internal.model.NarLinker;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractGnuLinkerSynchroniser implements SettingsSynchroniser {
-	
+
 	private static final String defaultFlags = "";
 	private static final String rpathFlag = "-Wl,-rpath";
 	private static final String incrementalFlag = "-i";
 	private static final String mapFlag = "-M";
-	
+
 	public AbstractGnuLinkerSynchroniser() {
 	}
 
 	public abstract String getToolId();
-	
+
 	public abstract String getFlagsOptionId();
-	
+
 	public abstract String getSharedOptionId();
-	
+
 	public String getFlags(final NarLinker linkerSettings, final List<NarLib> libs) {
 		final StringBuilder flags = new StringBuilder();
 
@@ -73,36 +73,33 @@ public abstract class AbstractGnuLinkerSynchroniser implements SettingsSynchroni
 			if (first) {
 				first = false;
 				flags.append(" " + rpathFlag + ",");
-			}
-			else {
+			} else {
 				flags.append(":");
 			}
 			flags.append(lib.getDirectory());
 		}
 		return flags.toString();
 	}
-	
+
 	@Override
-	public void fullSync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException {
-		final BuildConfigurationData confData = (BuildConfigurationData)cfg.getConfigurationData();
+	public void fullSync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException {
+		final BuildConfigurationData confData = (BuildConfigurationData) cfg.getConfigurationData();
 		final IConfiguration managedConf = confData.getConfiguration();
 		for (final ITool tool : managedConf.getToolsBySuperClassId(getToolId())) {
 			tool.setToolCommand(artifactSettings.getLinkerSettings().getName());
-		}		
+		}
 	}
 
 	@Override
-	public void pathsOnlySync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException {
-		final BuildConfigurationData confData = (BuildConfigurationData)cfg.getConfigurationData();
+	public void pathsOnlySync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException {
+		final BuildConfigurationData confData = (BuildConfigurationData) cfg.getConfigurationData();
 		final IConfiguration managedConf = confData.getConfiguration();
 		final OptionSetter optionSetter = new OptionSetter(managedConf, getToolId());
-		setOptions(optionSetter, artifactSettings);		
+		setOptions(optionSetter, artifactSettings);
 	}
-	
+
 	protected void setOptions(final OptionSetter optionSetter, final NarBuildArtifact settings) throws CoreException {
-		
+
 		// Clear all other options
 		optionSetter.clearOptions();
 
@@ -113,7 +110,7 @@ public abstract class AbstractGnuLinkerSynchroniser implements SettingsSynchroni
 		}
 		String flags = getFlags(settings.getLinkerSettings(), libs);
 		optionSetter.setOption(getFlagsOptionId(), flags.trim());
-		
+
 		if (settings.isSharedLibrary()) {
 			// Add the shared flag
 			optionSetter.setOption(getSharedOptionId(), true);

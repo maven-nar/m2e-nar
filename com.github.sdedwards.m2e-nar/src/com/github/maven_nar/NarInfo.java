@@ -42,246 +42,199 @@ import org.apache.maven.plugin.logging.Log;
 /**
  * @author Mark Donszelmann
  */
-public class NarInfo
-{
+public class NarInfo {
 
-    public static final String NAR_PROPERTIES = "nar.properties";
+	public static final String NAR_PROPERTIES = "nar.properties";
 
-    private String groupId, artifactId, version;
+	private String groupId, artifactId, version;
 
-    private Properties info;
+	private Properties info;
 
-    private Log log;
+	private Log log;
 
-    public NarInfo( String groupId, String artifactId, String version, Log log ) throws MojoExecutionException
-    {
-        this( groupId, artifactId, version, log, null );
-    }
-    
-    public NarInfo( String groupId, String artifactId, String version, Log log, File propertiesFile ) throws MojoExecutionException
-    {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
-        this.log = log;
-        info = new Properties();
+	public NarInfo(String groupId, String artifactId, String version, Log log) throws MojoExecutionException {
+		this(groupId, artifactId, version, log, null);
+	}
 
-        // Fill with general properties.nar file
-        if( propertiesFile != null )
-        {
-            try
-            {
-                info.load( new FileInputStream( propertiesFile ) );
-            }
-            catch ( FileNotFoundException e )
-            {
-                // ignored
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Problem loading "+propertiesFile, e );
-            }
-        }
-    }
+	public NarInfo(String groupId, String artifactId, String version, Log log, File propertiesFile) throws MojoExecutionException {
+		this.groupId = groupId;
+		this.artifactId = artifactId;
+		this.version = version;
+		this.log = log;
+		info = new Properties();
 
-    public final String toString()
-    {
-        StringBuffer s = new StringBuffer( "NarInfo for " );
-        s.append( groupId );
-        s.append( ":" );
-        s.append( artifactId );
-        s.append( "-" );
-        s.append( version );
-        s.append( " {\n" );
+		// Fill with general properties.nar file
+		if (propertiesFile != null) {
+			try {
+				info.load(new FileInputStream(propertiesFile));
+			} catch (FileNotFoundException e) {
+				// ignored
+			} catch (IOException e) {
+				throw new MojoExecutionException("Problem loading " + propertiesFile, e);
+			}
+		}
+	}
 
-        for ( Iterator i = info.keySet().iterator(); i.hasNext(); )
-        {
-            String key = (String) i.next();
-            s.append( "   " );
-            s.append( key );
-            s.append( "='" );
-            s.append( info.getProperty( key, "<null>" ) );
-            s.append( "'\n" );
-        }
+	public final String toString() {
+		StringBuffer s = new StringBuffer("NarInfo for ");
+		s.append(groupId);
+		s.append(":");
+		s.append(artifactId);
+		s.append("-");
+		s.append(version);
+		s.append(" {\n");
 
-        s.append( "}\n" );
-        return s.toString();
-    }
+		for (Iterator i = info.keySet().iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			s.append("   ");
+			s.append(key);
+			s.append("='");
+			s.append(info.getProperty(key, "<null>"));
+			s.append("'\n");
+		}
 
-    public final boolean exists( File artifactFile )
-    {
-        return getNarPropertiesURL( artifactFile ) != null;
-    }
+		s.append("}\n");
+		return s.toString();
+	}
 
-    public final void read( File artifactFile )
-        throws IOException
-    {
-        info.load( getNarPropertiesURL(artifactFile).openStream() );
-    }
+	public final boolean exists(File artifactFile) {
+		return getNarPropertiesURL(artifactFile) != null;
+	}
 
-    public final void write( File dir )
-        throws IOException
-    {
-    	// TODO: this structure seems overly deep it already gets unpacked to own folder - classes/
-        File propertiesDir =
-            new File( dir, "META-INF/nar/" + groupId + "/" + artifactId );
-        if ( !propertiesDir.exists() )
-        {
-            propertiesDir.mkdirs();
-        }
-        File propertiesFile = new File( propertiesDir, NarInfo.NAR_PROPERTIES );
-        writeToFile( propertiesFile );
-    }
+	public final void read(File artifactFile) throws IOException {
+		info.load(getNarPropertiesURL(artifactFile).openStream());
+	}
 
-    private URL getNarPropertiesURL( File artifactFile )
-    {
-    	try
-    	{
-	    	// artifactFile can either be a directory in a multi-module compile,
-	    	// or a JAR in the local repository. URLClassLoader can handle this for us
-	    	URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { 
-	    			artifactFile.toURI().toURL() } );
-	        return urlClassLoader.findResource("META-INF/nar/" + groupId + "/" + artifactId + "/" + NAR_PROPERTIES );
-    	}
-    	catch (MalformedURLException e)
-    	{
-    		log.error("Could not process artifact " + artifactFile, e);
-    		return null;
-    	}
-    }
+	public final void write(File dir) throws IOException {
+		// TODO: this structure seems overly deep it already gets unpacked to
+		// own folder - classes/
+		File propertiesDir = new File(dir, "META-INF/nar/" + groupId + "/" + artifactId);
+		if (!propertiesDir.exists()) {
+			propertiesDir.mkdirs();
+		}
+		File propertiesFile = new File(propertiesDir, NarInfo.NAR_PROPERTIES);
+		writeToFile(propertiesFile);
+	}
 
-    /**
-     * No binding means default binding.
-     * 
-     * @param aol
-     * @return
-     */
-    public final String getBinding( AOL aol, String defaultBinding )
-    {
-        return getProperty( aol, "libs.binding", defaultBinding );
-    }
+	private URL getNarPropertiesURL(File artifactFile) {
+		try {
+			// artifactFile can either be a directory in a multi-module compile,
+			// or a JAR in the local repository. URLClassLoader can handle this
+			// for us
+			URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { artifactFile.toURI().toURL() });
+			return urlClassLoader.findResource("META-INF/nar/" + groupId + "/" + artifactId + "/" + NAR_PROPERTIES);
+		} catch (MalformedURLException e) {
+			log.error("Could not process artifact " + artifactFile, e);
+			return null;
+		}
+	}
 
-    public final void setBinding( AOL aol, String value )
-    {
-        setProperty( aol, "libs.binding", value );
-    }
+	/**
+	 * No binding means default binding.
+	 * 
+	 * @param aol
+	 * @return
+	 */
+	public final String getBinding(AOL aol, String defaultBinding) {
+		return getProperty(aol, "libs.binding", defaultBinding);
+	}
 
-    public final String getOutput( AOL aol, String defaultOutput )
-    {
-    	return getProperty( aol, "output", defaultOutput );
-    }
+	public final void setBinding(AOL aol, String value) {
+		setProperty(aol, "libs.binding", value);
+	}
 
-    public final void setOutput( AOL aol, String value )
-    {
-        setProperty( aol, "output", value );
-    }
+	public final String getOutput(AOL aol, String defaultOutput) {
+		return getProperty(aol, "output", defaultOutput);
+	}
 
-    // FIXME replace with list of AttachedNarArtifacts
-    public final String[] getAttachedNars( AOL aol, String type )
-    {
-        String attachedNars = getProperty( aol, NarConstants.NAR+"." + type );
-        return attachedNars != null ? attachedNars.split( "," ) : null;
-    }
+	public final void setOutput(AOL aol, String value) {
+		setProperty(aol, "output", value);
+	}
 
-    public final void addNar( AOL aol, String type, String nar )
-    {
-        String nars = getProperty( aol, NarConstants.NAR+"." + type );
-        nars = ( nars == null ) ? nar : nars + ", " + nar;
-        setProperty( aol, NarConstants.NAR+"." + type, nars );
-    }
+	// FIXME replace with list of AttachedNarArtifacts
+	public final String[] getAttachedNars(AOL aol, String type) {
+		String attachedNars = getProperty(aol, NarConstants.NAR + "." + type);
+		return attachedNars != null ? attachedNars.split(",") : null;
+	}
 
-    public final void setNar( AOL aol, String type, String nar )
-    {
-        setProperty( aol, NarConstants.NAR+"." + type, nar );
-    }
+	public final void addNar(AOL aol, String type, String nar) {
+		String nars = getProperty(aol, NarConstants.NAR + "." + type);
+		nars = (nars == null) ? nar : nars + ", " + nar;
+		setProperty(aol, NarConstants.NAR + "." + type, nars);
+	}
 
-    public final AOL getAOL( AOL aol )
-    {
-        return aol == null ? null : new AOL( getProperty( aol, aol.toString(), aol.toString() ) );
-    }
+	public final void setNar(AOL aol, String type, String nar) {
+		setProperty(aol, NarConstants.NAR + "." + type, nar);
+	}
 
-    public final String getOptions( AOL aol )
-    {
-        return getProperty( aol, "linker.options" );
-    }
+	public final AOL getAOL(AOL aol) {
+		return aol == null ? null : new AOL(getProperty(aol, aol.toString(), aol.toString()));
+	}
 
-    public final String getLibs( AOL aol )
-    {
-    	// TODO: resolve output Vs libs.names
-    	// nothing is available to set libs.names within the build.
-    	// if there is an existing nar.properties that was hand crafter with libs.names then this would work - undocumented feature?
-        return getProperty( aol, "libs.names", getOutput( aol, artifactId + "-" + version ) );
-    }
+	public final String getOptions(AOL aol) {
+		return getProperty(aol, "linker.options");
+	}
 
-    public final String getSysLibs( AOL aol )
-    {
-        return getProperty( aol, "syslibs.names" );
-    }
-    
-    public final void setTargetDirectory( final File targetDirectory ) {
-    	setProperty(null, "targetDirectory", targetDirectory.getAbsolutePath());
-    }
+	public final String getLibs(AOL aol) {
+		// TODO: resolve output Vs libs.names
+		// nothing is available to set libs.names within the build.
+		// if there is an existing nar.properties that was hand crafter with
+		// libs.names then this would work - undocumented feature?
+		return getProperty(aol, "libs.names", getOutput(aol, artifactId + "-" + version));
+	}
 
-    public final File getTargetDirectory() {
-    	final String targetDirectory = getProperty(null, "targetDirectory");
-    	if (targetDirectory != null)
-    	{
-    		return new File(targetDirectory);
-    	}
-    	else
-    	{
-    		return null;
-    	}
-    }
+	public final String getSysLibs(AOL aol) {
+		return getProperty(aol, "syslibs.names");
+	}
 
-    public final void writeToFile( File file )
-        throws IOException
-    {
-        info.store( new FileOutputStream( ( file ) ), "NAR Properties for " + groupId + "." + artifactId + "-"
-            + version );
-    }
+	public final void setTargetDirectory(final File targetDirectory) {
+		setProperty(null, "targetDirectory", targetDirectory.getAbsolutePath());
+	}
 
-    private void setProperty( AOL aol, String key, String value )
-    {
-        if ( aol == null )
-        {
-            info.setProperty( key, value );
-        }
-        else
-        {
-            info.setProperty( aol.toString() + "." + key, value );
-        }
-    }
+	public final File getTargetDirectory() {
+		final String targetDirectory = getProperty(null, "targetDirectory");
+		if (targetDirectory != null) {
+			return new File(targetDirectory);
+		} else {
+			return null;
+		}
+	}
 
-    public final String getProperty( AOL aol, String key )
-    {
-        return getProperty( aol, key, (String) null );
-    }
+	public final void writeToFile(File file) throws IOException {
+		info.store(new FileOutputStream((file)), "NAR Properties for " + groupId + "." + artifactId + "-" + version);
+	}
 
-    public final String getProperty( AOL aol, String key, String defaultValue )
-    {
-        if ( key == null )
-        {
-            return defaultValue;
-        }
-        String value = info.getProperty( key, defaultValue );
-        value = aol == null ? value : info.getProperty( aol.toString() + "." + key, value );
-        log.debug( "getProperty(" + aol + ", " + key + ", " + defaultValue + ") = " + value );
-        return value;
-    }
+	private void setProperty(AOL aol, String key, String value) {
+		if (aol == null) {
+			info.setProperty(key, value);
+		} else {
+			info.setProperty(aol.toString() + "." + key, value);
+		}
+	}
 
-    public final int getProperty( AOL aol, String key, int defaultValue )
-    {
-        return Integer.parseInt( getProperty( aol, key, Integer.toString( defaultValue ) ) );
-    }
+	public final String getProperty(AOL aol, String key) {
+		return getProperty(aol, key, (String) null);
+	}
 
-    public final boolean getProperty( AOL aol, String key, boolean defaultValue )
-    {
-        return (new Boolean( getProperty( aol, key, String.valueOf( defaultValue ) ) )).booleanValue();
-    }
+	public final String getProperty(AOL aol, String key, String defaultValue) {
+		if (key == null) {
+			return defaultValue;
+		}
+		String value = info.getProperty(key, defaultValue);
+		value = aol == null ? value : info.getProperty(aol.toString() + "." + key, value);
+		log.debug("getProperty(" + aol + ", " + key + ", " + defaultValue + ") = " + value);
+		return value;
+	}
 
-    public final File getProperty( AOL aol, String key, File defaultValue )
-    {
-        return new File( getProperty( aol, key, defaultValue.getPath() ) );
-    }
+	public final int getProperty(AOL aol, String key, int defaultValue) {
+		return Integer.parseInt(getProperty(aol, key, Integer.toString(defaultValue)));
+	}
+
+	public final boolean getProperty(AOL aol, String key, boolean defaultValue) {
+		return (new Boolean(getProperty(aol, key, String.valueOf(defaultValue)))).booleanValue();
+	}
+
+	public final File getProperty(AOL aol, String key, File defaultValue) {
+		return new File(getProperty(aol, key, defaultValue.getPath()));
+	}
 }

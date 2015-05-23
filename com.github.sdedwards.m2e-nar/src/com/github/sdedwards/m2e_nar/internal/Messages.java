@@ -22,51 +22,51 @@ package com.github.sdedwards.m2e_nar.internal;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-  private static final String BUNDLE_NAME = "com.github.sdedwards.m2e_nar.internal.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "com.github.sdedwards.m2e_nar.internal.messages"; //$NON-NLS-1$
 
-  public static String CProjectConfigurator_task_name;
+	public static String CProjectConfigurator_task_name;
 
-  public static String BuildPathManager_setting_paths;
+	public static String BuildPathManager_setting_paths;
 
-  public static String DownloadSourcesJob_job_download;
+	public static String DownloadSourcesJob_job_download;
 
-  public static String MavenClasspathContainer_description;
+	public static String MavenClasspathContainer_description;
 
-  public static String MavenClasspathContainerInitializer_error_cannot_persist;
+	public static String MavenClasspathContainerInitializer_error_cannot_persist;
 
-  public static String MavenClasspathContainerInitializer_job_name;
+	public static String MavenClasspathContainerInitializer_job_name;
 
-  public static String MavenClasspathContainerPage_control_desc;
+	public static String MavenClasspathContainerPage_control_desc;
 
-  public static String MavenClasspathContainerPage_control_title;
+	public static String MavenClasspathContainerPage_control_title;
 
-  public static String MavenClasspathContainerPage_link;
+	public static String MavenClasspathContainerPage_link;
 
-  public static String MavenClasspathContainerPage_title;
+	public static String MavenClasspathContainerPage_title;
 
-  public static String MavenJdtPlugin_job_name;
+	public static String MavenJdtPlugin_job_name;
 
-  public static String MavenRuntimeClasspathProvider_error_unsupported;
+	public static String MavenRuntimeClasspathProvider_error_unsupported;
 
-  public static String OpenJavaDocAction_error_download;
+	public static String OpenJavaDocAction_error_download;
 
-  public static String OpenJavaDocAction_error_message;
+	public static String OpenJavaDocAction_error_message;
 
-  public static String OpenJavaDocAction_error_title;
+	public static String OpenJavaDocAction_error_title;
 
-  public static String OpenJavaDocAction_info_title;
+	public static String OpenJavaDocAction_info_title;
 
-  public static String OpenJavaDocAction_job_open_javadoc;
+	public static String OpenJavaDocAction_job_open_javadoc;
 
-  public static String OpenJavaDocAction_message1;
+	public static String OpenJavaDocAction_message1;
 
-  public static String CProjectConfigurator_error_configure_execution;
-  
-  static {
-    // initialize resource bundle
-    NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-  }
+	public static String CProjectConfigurator_error_configure_execution;
 
-  private Messages() {
-  }
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+
+	private Messages() {
+	}
 }

@@ -30,13 +30,13 @@ public class NarCompiler {
 	public enum OptimizationLevel {
 		NONE, SIZE, MINIMAL, SPEED, FULL, AGGRESSIVE, EXTREME, UNSAFE
 	}
-	
+
 	private String name;
 
 	private final List<String> includePaths = new ArrayList<String>();
 	private final List<String> systemIncludePaths = new ArrayList<String>();
 	private final List<File> sourceDirectories = new ArrayList<File>();
-	
+
 	private boolean debug;
 	private boolean rtti;
 	private OptimizationLevel optimize;
@@ -56,77 +56,101 @@ public class NarCompiler {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getIncludePaths()
 	 */
 	public List<String> getIncludePaths() {
 		return includePaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getSystemIncludePaths()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarCompilerSettings#getSystemIncludePaths()
 	 */
 	public List<String> getSystemIncludePaths() {
 		return systemIncludePaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getSourceDirectories()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarCompilerSettings#getSourceDirectories()
 	 */
 	public List<File> getSourceDirectories() {
 		return sourceDirectories;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#isDebug()
 	 */
 	public boolean isDebug() {
 		return debug;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#isRtti()
 	 */
 	public boolean isRtti() {
 		return rtti;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getOptimize()
 	 */
 	public OptimizationLevel getOptimize() {
 		return optimize;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#isMultiThreaded()
 	 */
 	public boolean isMultiThreaded() {
 		return multiThreaded;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#isExceptions()
 	 */
 	public boolean isExceptions() {
 		return exceptions;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getDefines()
 	 */
 	public List<String> getDefines() {
 		return defines;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getUndefines()
 	 */
 	public List<String> getUndefines() {
 		return undefines;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarCompilerSettings#getOptions()
 	 */
 	public List<String> getOptions() {
@@ -160,6 +184,5 @@ public class NarCompiler {
 	public Set<String> getExcludes() {
 		return excludes;
 	}
-	
-	
+
 }

@@ -51,9 +51,9 @@ under the License.
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@github.com:sdedwards/m2e-nar.git</connection>
-		<url>scm:git:git@github.com:sdedwards/m2e-nar.git</url>
-		<developerConnection>scm:git:git@github.com:sdedwards/m2e-nar.git</developerConnection>
+		<connection>scm:git:git@github.com:${github.repo.id}.git</connection>
+		<url>scm:git:git@github.com:${github.repo.id}.git</url>
+		<developerConnection>scm:git:git@github.com:${github.repo.id}.git</developerConnection>
 	</scm>
 
 	<issueManagement>
@@ -70,6 +70,7 @@ under the License.
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>0.22.0</tycho-version>
 		<eclipse-repo.url>http://download.eclipse.org/releases/kepler</eclipse-repo.url>
+		<github.repo.id>sdedwards/m2e-nar</github.repo.id>
 	</properties>
 
 	<repositories>
@@ -151,16 +152,6 @@ under the License.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.7</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.1</version>
-                    <configuration>
-                        <goals>deploy</goals>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -250,7 +241,7 @@ under the License.
 						<description>First try at release</description>
 						<releaseName>v${project.version}</releaseName>
 						<tag>v${project.version}</tag>
-						<repositoryId>sdedwards/m2e-nar</repositoryId>
+						<repositoryId>${github.repo.id}</repositoryId>
 					</configuration>
 					<executions>
 						<execution>

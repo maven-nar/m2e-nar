@@ -32,7 +32,7 @@ import com.github.sdedwards.m2e_nar.MavenNarPlugin;
 public final class OptionSetter {
 	private final IConfiguration config;
 	private final String toolId;
-	
+
 	public OptionSetter(final IConfiguration config, final String toolId) {
 		this.config = config;
 		this.toolId = toolId;
@@ -47,31 +47,25 @@ public final class OptionSetter {
 						config.setOption(tool, option, false);
 						break;
 					case IOption.STRING:
-						config.setOption(tool, option, (String)null);
+						config.setOption(tool, option, (String) null);
 						break;
 					}
 				}
 			}
-		}
-		catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Couldn't clear options", e));
+		} catch (BuildException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Couldn't clear options", e));
 		}
 	}
-	
+
 	public void setOption(final String optionId, final String value) throws CoreException {
 		try {
 			for (final ITool tool : config.getToolsBySuperClassId(toolId)) {
 				final IOption option = tool.getOptionBySuperClassId(optionId);
 				config.setOption(tool, option, value);
 			}
+		} catch (BuildException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Couldn't set " + optionId + " option", e));
 		}
-		catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Couldn't set " + optionId + " option", e));
-		}		
 	}
 
 	public void setOption(final String optionId, final String[] values) throws CoreException {
@@ -80,12 +74,9 @@ public final class OptionSetter {
 				final IOption option = tool.getOptionBySuperClassId(optionId);
 				config.setOption(tool, option, values);
 			}
+		} catch (BuildException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Couldn't set " + optionId + " option", e));
 		}
-		catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Couldn't set " + optionId + " option", e));
-		}		
 	}
 
 	public void setOption(final String optionId, final boolean value) throws CoreException {
@@ -94,11 +85,8 @@ public final class OptionSetter {
 				final IOption option = tool.getOptionBySuperClassId(optionId);
 				config.setOption(tool, option, value);
 			}
+		} catch (BuildException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Couldn't set " + optionId + " option", e));
 		}
-		catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Couldn't set " + optionId + " option", e));
-		}		
 	}
 }

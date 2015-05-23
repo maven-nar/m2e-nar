@@ -27,7 +27,7 @@ public class NarLinker {
 	private String name;
 	private List<NarLib> libs = new ArrayList<NarLib>();
 	private List<NarSysLib> sysLibs = new ArrayList<NarSysLib>();
-	
+
 	private boolean incremental;
 	private boolean map;
 	private final List<String> options = new ArrayList<String>();
@@ -41,35 +41,45 @@ public class NarLinker {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLinkerSettings#getLibs()
 	 */
 	public List<NarLib> getLibs() {
 		return libs;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLinkerSettings#getSysLibs()
 	 */
 	public List<NarSysLib> getSysLibs() {
 		return sysLibs;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLinkerSettings#isIncremental()
 	 */
 	public boolean isIncremental() {
 		return incremental;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLinkerSettings#isMap()
 	 */
 	public boolean isMap() {
 		return map;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarLinkerSettings#getOptions()
 	 */
 	public List<String> getOptions() {
@@ -91,5 +101,5 @@ public class NarLinker {
 	public void setLinkCpp(boolean linkCpp) {
 		this.linkCpp = linkCpp;
 	}
-	
+
 }

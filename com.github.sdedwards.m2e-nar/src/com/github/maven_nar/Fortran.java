@@ -24,15 +24,11 @@ package com.github.maven_nar;
  * 
  * @author Mark Donszelmann
  */
-public class Fortran
-    extends Compiler
-{
-    public Fortran()
-    {
-    }
+public class Fortran extends Compiler {
+	public Fortran() {
+	}
 
-    public final String getLanguage()
-    {
-        return "fortran";
-    }
+	public final String getLanguage() {
+		return "fortran";
+	}
 }

@@ -28,8 +28,11 @@ public final class CdtUtils {
 
 	public static final String DEFAULT_CONFIG_NAME_PREFIX = "nar-";
 	public static final String DEFAULT_TEST_CONFIG_NAME_PREFIX = "nar-test-";
-	//private static final String DEFAULT_NAR_COMPILE_EXECUTION = "default-nar-compile";
-	//private static final String DEFAULT_NAR_TESTCOMPILE_EXECUTION = "default-nar-testCompile";
+
+	// private static final String DEFAULT_NAR_COMPILE_EXECUTION =
+	// "default-nar-compile";
+	// private static final String DEFAULT_NAR_TESTCOMPILE_EXECUTION =
+	// "default-nar-testCompile";
 
 	public static String convertArtefactType(final String narArtefactType) {
 		if (NarBuildArtifact.EXECUTABLE.equals(narArtefactType)) {
@@ -43,26 +46,24 @@ public final class CdtUtils {
 		}
 		return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB;
 	}
-	
+
 	public static String getConfigName(MojoExecution compileExecution, NarBuildArtifact artifactSettings) {
 		String configNamePrefix = DEFAULT_CONFIG_NAME_PREFIX;
 		/*
-		if (!DEFAULT_NAR_COMPILE_EXECUTION.equals(compileExecution
-				.getExecutionId())) {
-			configNamePrefix = compileExecution.getExecutionId() + "-";
-		}
-		*/
+		 * if (!DEFAULT_NAR_COMPILE_EXECUTION.equals(compileExecution
+		 * .getExecutionId())) { configNamePrefix =
+		 * compileExecution.getExecutionId() + "-"; }
+		 */
 		return configNamePrefix + artifactSettings.getType();
 	}
 
 	public static String getTestConfigName(MojoExecution compileExecution, NarBuildArtifact artifactSettings) {
 		String configNamePrefix = DEFAULT_TEST_CONFIG_NAME_PREFIX;
 		/*
-		if (!DEFAULT_NAR_TESTCOMPILE_EXECUTION.equals(compileExecution
-				.getExecutionId())) {
-			configNamePrefix = compileExecution.getExecutionId() + "-";
-		}
-		*/
+		 * if (!DEFAULT_NAR_TESTCOMPILE_EXECUTION.equals(compileExecution
+		 * .getExecutionId())) { configNamePrefix =
+		 * compileExecution.getExecutionId() + "-"; }
+		 */
 		return configNamePrefix + artifactSettings.getArtifactName();
 	}
 

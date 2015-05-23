@@ -19,10 +19,8 @@
  */
 package com.github.sdedwards.m2e_nar.internal.cdt;
 
-
-
 public class CppMacosxGccSynchroniser extends AbstractSettingsSynchroniser {
-	
+
 	protected static final String toolchain = "MacOSX GCC";
 
 	public CppMacosxGccSynchroniser() {
@@ -34,5 +32,5 @@ public class CppMacosxGccSynchroniser extends AbstractSettingsSynchroniser {
 	public String getToolchain() {
 		return toolchain;
 	}
-	
+
 }

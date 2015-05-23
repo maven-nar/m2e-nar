@@ -57,8 +57,7 @@ public class MavenNarPlugin extends AbstractUIPlugin {
 	public MavenNarPlugin() {
 		instance = this;
 
-		if (Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID
-				+ "/debug/initialization"))) {
+		if (Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/debug/initialization"))) {
 			System.err.println("### executing constructor " + PLUGIN_ID);
 			new Throwable().printStackTrace();
 		}
@@ -70,17 +69,15 @@ public class MavenNarPlugin extends AbstractUIPlugin {
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 
-		if (Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID
-				+ "/debug/initialization"))) {
+		if (Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/debug/initialization"))) {
 			System.err.println("### executing start() " + PLUGIN_ID);
 			new Throwable().printStackTrace();
 		}
-		
+
 		// Make sure the m2e jdt plugin is initialised first
 		MavenJdtPlugin.getDefault();
 
-		MavenProjectManager projectManager = MavenPluginActivator.getDefault()
-				.getMavenProjectManager();
+		MavenProjectManager projectManager = MavenPluginActivator.getDefault().getMavenProjectManager();
 
 		this.buildpathManager = new BuildPathManager(projectManager);
 		projectManager.addMavenProjectChangedListener(this.buildpathManager);
@@ -101,8 +98,7 @@ public class MavenNarPlugin extends AbstractUIPlugin {
 	 * @noreference see class javadoc
 	 */
 	public void stop(BundleContext context) throws Exception {
-		MavenProjectManager projectManager = MavenPluginActivator.getDefault()
-				.getMavenProjectManager();
+		MavenProjectManager projectManager = MavenPluginActivator.getDefault().getMavenProjectManager();
 		projectManager.removeMavenProjectChangedListener(buildpathManager);
 
 		/*

@@ -19,10 +19,8 @@
  */
 package com.github.sdedwards.m2e_nar.internal.cdt;
 
-
-
 public class CppLinuxGccSynchroniser extends AbstractSettingsSynchroniser {
-	
+
 	protected static final String toolchain = "Linux GCC";
 
 	public CppLinuxGccSynchroniser() {
@@ -34,5 +32,5 @@ public class CppLinuxGccSynchroniser extends AbstractSettingsSynchroniser {
 	public String getToolchain() {
 		return toolchain;
 	}
-	
+
 }

@@ -21,11 +21,10 @@ package com.github.maven_nar;
 
 import org.apache.maven.plugin.MojoFailureException;
 
-
 public interface ITest extends Executable {
 
 	public abstract String getName() throws MojoFailureException;
-	
+
 	public abstract String getLink();
 
 }

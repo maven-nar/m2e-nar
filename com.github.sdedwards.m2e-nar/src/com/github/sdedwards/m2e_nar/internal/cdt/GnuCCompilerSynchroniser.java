@@ -23,44 +23,38 @@ import com.github.sdedwards.m2e_nar.internal.model.NarBuildArtifact;
 import com.github.sdedwards.m2e_nar.internal.model.NarCompiler;
 
 public class GnuCCompilerSynchroniser extends AbstractGnuCompilerSynchroniser {
-	
+
 	protected static final String cCompilerId = "cdt.managedbuild.tool.gnu.c.compiler";
 	protected static final String cOptLevel = "gnu.c.compiler.option.optimization.level";
 	protected static final String cDebugLevel = "gnu.c.compiler.option.debugging.level";
 	protected static final String cUndefId = "gnu.c.compiler.option.preprocessor.undef.symbol";
 	protected static final String cOtherFlags = "gnu.c.compiler.option.misc.other";
 	protected static final String cfPIC = "gnu.c.compiler.option.misc.pic";
-	
+
 	protected enum COptimizationLevel {
-		NONE("gnu.c.optimization.level.none"),
-		OPTIMIZE("gnu.c.optimization.level.optimize"),
-		MORE("gnu.c.optimization.level.more"),
-		MOST("gnu.c.optimization.level.most"),
-		SIZE("gnu.c.optimization.level.size");
-		
+		NONE("gnu.c.optimization.level.none"), OPTIMIZE("gnu.c.optimization.level.optimize"), MORE("gnu.c.optimization.level.more"), MOST(
+				"gnu.c.optimization.level.most"), SIZE("gnu.c.optimization.level.size");
+
 		final String level;
-		
+
 		private COptimizationLevel(final String level) {
 			this.level = level;
 		}
-		
+
 		public String toString() {
 			return level;
 		}
 	}
-	
+
 	protected enum CDebugLevel {
-		NONE("gnu.c.debugging.level.none"),
-		MINIMAL("gnu.c.debugging.level.minimal"),
-		DEFAULT("gnu.c.debugging.level.default"),
-		MAX("gnu.c.debugging.level.max");
-		
+		NONE("gnu.c.debugging.level.none"), MINIMAL("gnu.c.debugging.level.minimal"), DEFAULT("gnu.c.debugging.level.default"), MAX("gnu.c.debugging.level.max");
+
 		final String level;
-		
+
 		private CDebugLevel(final String level) {
 			this.level = level;
 		}
-		
+
 		public String toString() {
 			return level;
 		}

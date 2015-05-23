@@ -35,11 +35,11 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @author Mark Donszelmann
  */
-public class Lib implements ILib
-{
+public class Lib implements ILib {
 
 	/**
-     * Name of the library, or a dependency groupId:artifactId if this library contains sublibraries
+	 * Name of the library, or a dependency groupId:artifactId if this library
+	 * contains sublibraries
 	 * 
 	 * @parameter default-value=""
 	 * @required
@@ -69,21 +69,27 @@ public class Lib implements ILib
 	 */
 	private List/* <Lib> */libs;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILib#getType()
 	 */
 	public String getType() {
 		return type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILib#getDirectory()
 	 */
 	public File getDirectory() {
 		return directory;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILib#getName()
 	 */
 	public String getName() {
@@ -101,6 +107,5 @@ public class Lib implements ILib
 	protected void setDirectory(File directory) {
 		this.directory = directory;
 	}
-    
-    
+
 }

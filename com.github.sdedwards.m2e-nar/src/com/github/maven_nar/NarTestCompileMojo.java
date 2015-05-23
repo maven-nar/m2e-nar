@@ -22,23 +22,35 @@
  */
 package com.github.maven_nar;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+
 /**
  * Compiles native test source files.
- *
+ * 
  * @goal nar-testCompile
  * @phase test-compile
  * @requiresDependencyResolution test
  * @threadSafe
  * @author Mark Donszelmann
  */
-public class NarTestCompileMojo
-    extends AbstractCompileMojo
-{
-    /**
-     * Skip running of NAR integration test plugins.
-     *
-     * @parameter property="skipNar" default-value="false"
-     */
-    protected boolean skipNar;
+public class NarTestCompileMojo extends AbstractCompileMojo {
+	/**
+	 * Skip running of NAR integration test plugins.
+	 * 
+	 * @parameter property="skipNar" default-value="false"
+	 */
+	protected boolean skipNar;
 
+	protected List<Artifact> getArtifacts() {
+		final Set<Artifact> artifacts = getMavenProject().getArtifacts();
+		List<Artifact> returnArtifact = new ArrayList<Artifact>();
+		for (Artifact a : artifacts) {
+			returnArtifact.add(a);
+		}
+		return returnArtifact;
+	}
 }

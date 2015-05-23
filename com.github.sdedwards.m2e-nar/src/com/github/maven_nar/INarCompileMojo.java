@@ -27,40 +27,35 @@ import org.apache.maven.plugin.MojoFailureException;
 public interface INarCompileMojo {
 
 	public abstract void validate() throws MojoFailureException, MojoExecutionException;
-	
+
 	public abstract String getOS();
 
 	public abstract boolean isSkip();
-	
+
 	public abstract String getOutput(String type) throws MojoFailureException, MojoExecutionException;
-	
+
 	public abstract List<NarArtifact> getNarArtifacts();
-	
+
 	public abstract ILinker getLinker();
-	
+
 	public abstract List/* <ILibrary> */getLibraries();
-	
+
 	public abstract List/* <ITest> */getTests();
 
 	public abstract ICompiler getC();
-	
+
 	public abstract ICompiler getCpp();
-	
+
 	public abstract List/* <String> */getJavahIncludePaths();
 
-	public abstract List/* <String> */getJavaIncludePaths()
-			throws MojoExecutionException, MojoFailureException;
+	public abstract List/* <String> */getJavaIncludePaths() throws MojoExecutionException, MojoFailureException;
 
-	public abstract List/* <File> */getDependencyIncludePaths()
-			throws MojoExecutionException, MojoFailureException;
+	public abstract List/* <File> */getDependencyIncludePaths() throws MojoExecutionException, MojoFailureException;
 
-	public abstract List/* <ILib> */getDependencyLibs(String type, ITest test)
-			throws MojoExecutionException, MojoFailureException;
+	public abstract List/* <ILib> */getDependencyLibs(String type, ITest test) throws MojoExecutionException, MojoFailureException;
 
-	public abstract List/* <ISysLib> */getDependencySysLibs(String type)
-			throws MojoExecutionException, MojoFailureException;
+	public abstract List/* <ISysLib> */getDependencySysLibs(String type) throws MojoExecutionException, MojoFailureException;
 
-	public abstract List/* <String> */getDependencyOptions(String type)
-			throws MojoExecutionException, MojoFailureException;
+	public abstract List/* <String> */getDependencyOptions(String type) throws MojoExecutionException, MojoFailureException;
 
 }

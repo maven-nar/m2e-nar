@@ -78,13 +78,13 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 	protected List<ArtifactRepository> remoteArtifactRepositories;
 
 	/**
-     * The plugin remote repositories declared in the pom.
-     * 
-     * @parameter default-value="${project.pluginArtifactRepositories}"
-     * @since 2.2
-     */
-    // private List remotePluginRepositories;
-	
+	 * The plugin remote repositories declared in the pom.
+	 * 
+	 * @parameter default-value="${project.pluginArtifactRepositories}"
+	 * @since 2.2
+	 */
+	// private List remotePluginRepositories;
+
 	protected List<NarArtifact> narDependencies = null;
 
 	protected final ArtifactRepository getLocalRepository() {
@@ -95,15 +95,7 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		return remoteArtifactRepositories;
 	}
 
-    protected List<Artifact> getArtifacts() {
-    	// Get all artifacts based on the dependency resolution of the mojo
-        Set<Artifact> artifacts = getMavenProject().getArtifacts();
-        List<Artifact> returnArtifact = new ArrayList<Artifact>();
-        for(Artifact a : artifacts) {
-            returnArtifact.add(a);
-        }
-        return returnArtifact;
-    }
+	protected abstract List<Artifact> getArtifacts();
 
 	/**
 	 * Returns dependencies which are dependent on NAR files (i.e. contain
@@ -113,9 +105,8 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		return narDependencies;
 	}
 
-	private final NarInfo getNarInfo(Artifact dependency)
-			throws MojoExecutionException {
-		
+	private final NarInfo getNarInfo(Artifact dependency) throws MojoExecutionException {
+
 		File file = dependency.getFile();
 		if (!file.exists()) {
 			getLog().debug("Dependency nar file does not exist: " + file);
@@ -128,13 +119,9 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		}
 
 		try {
-			NarInfo info = new NarInfo(dependency.getGroupId(),
-					dependency.getArtifactId(), dependency.getBaseVersion(),
-					getLog());
+			NarInfo info = new NarInfo(dependency.getGroupId(), dependency.getArtifactId(), dependency.getBaseVersion(), getLog());
 			if (!info.exists(file)) {
-				getLog().debug(
-						"Dependency nar file does not contain this artifact: "
-								+ file);
+				getLog().debug("Dependency nar file does not contain this artifact: " + file);
 				return null;
 			}
 			info.read(file);
@@ -144,51 +131,46 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		}
 	}
 
-	private final NarInfo getNarInfo(Artifact dependency, EclipseNarLayout layout)
-			throws MojoExecutionException, MojoFailureException {
-		NarInfo narInfo = new NarInfo(dependency.getGroupId(),
-				dependency.getArtifactId(), dependency.getBaseVersion(),
-				getLog());
+	private final NarInfo getNarInfo(Artifact dependency, EclipseNarLayout layout) throws MojoExecutionException, MojoFailureException {
+		NarInfo narInfo = new NarInfo(dependency.getGroupId(), dependency.getArtifactId(), dependency.getBaseVersion(), getLog());
 		AOL aol = getAOL();
-    	for (String type : layout.getConfigurations() ){
+		for (String type : layout.getConfigurations()) {
 
-            if ( ( narInfo.getOutput( aol, null ) == null ) )
-            {
-                narInfo.setOutput( aol, layout.getArtifactName(type) );
-            }
+			if ((narInfo.getOutput(aol, null) == null)) {
+				narInfo.setOutput(aol, layout.getArtifactName(type));
+			}
 
-        	// We prefer shared to jni/executable/static/none, 
-            if ( type.equals( ILibrary.SHARED ) )  // overwrite whatever we had
-            {
-                narInfo.setBinding( aol, type );
-                narInfo.setBinding( null, type );
-            }
-            else
-            {
-            	// if the binding is already set, then don't write it for jni/executable/static/none.
-                if ( ( narInfo.getBinding( aol, null ) == null ) )
-                {
-                    narInfo.setBinding( aol, type );
-                }
-                if ( ( narInfo.getBinding( null, null ) == null ) )
-                {
-                    narInfo.setBinding( null, type );
-                }
-            }
+			// We prefer shared to jni/executable/static/none,
+			if (type.equals(ILibrary.SHARED)) // overwrite whatever we had
+			{
+				narInfo.setBinding(aol, type);
+				narInfo.setBinding(null, type);
+			} else {
+				// if the binding is already set, then don't write it for
+				// jni/executable/static/none.
+				if ((narInfo.getBinding(aol, null) == null)) {
+					narInfo.setBinding(aol, type);
+				}
+				if ((narInfo.getBinding(null, null) == null)) {
+					narInfo.setBinding(null, type);
+				}
+			}
 
-        }
+		}
 
-    	// setting this first stops the per type config because getOutput check for aol defaults to this generic one...
-        if ( narInfo.getOutput( null, null ) == null )
-        {
-            narInfo.setOutput( null, dependency.getArtifactId() );
-        }
+		// setting this first stops the per type config because getOutput check
+		// for aol defaults to this generic one...
+		if (narInfo.getOutput(null, null) == null) {
+			narInfo.setOutput(null, dependency.getArtifactId());
+		}
 		return narInfo;
 	}
-	
-	public final List<AttachedNarArtifact> getAllAttachedNarArtifacts(
-			List<NarArtifact> narArtifacts/*, Library library*/)
-			throws MojoExecutionException, MojoFailureException {
+
+	public final List<AttachedNarArtifact> getAllAttachedNarArtifacts(List<NarArtifact> narArtifacts/*
+																									 * ,
+																									 * Library
+																									 * library
+																									 */) throws MojoExecutionException, MojoFailureException {
 		List<AttachedNarArtifact> artifactList = new ArrayList<AttachedNarArtifact>();
 		for (Iterator<NarArtifact> i = narArtifacts.iterator(); i.hasNext();) {
 			NarArtifact dependency = i.next();
@@ -198,28 +180,27 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 			if (dependency.getNarInfo() == null) {
 				continue;
 			}
-			
-			String binding = getBinding(/*library,*/ dependency);
+
+			String binding = getBinding(/* library, */dependency);
 
 			// TODO: dependency.getFile(); find out what the stored pom says
 			// about this - what nars should exist, what layout are they
 			// using...
 			artifactList.addAll(getAttachedNarArtifacts(dependency, /* library. */
 					getAOL(), binding));
-			artifactList.addAll(getAttachedNarArtifacts(dependency, null,
-					NarConstants.NAR_NO_ARCH));
+			artifactList.addAll(getAttachedNarArtifacts(dependency, null, NarConstants.NAR_NO_ARCH));
 		}
 		return artifactList;
 	}
 
-	protected String getBinding(/*Library library,*/ NarArtifact dependency)
-			throws MojoFailureException, MojoExecutionException {
+	protected String getBinding(/* Library library, */NarArtifact dependency) throws MojoFailureException, MojoExecutionException {
 		// how does this project specify the dependency is used
 		// - library.getLinker().getLibs();
 		// - if it is specified but the artifact is not available should fail.
-		//   otherwise how does the artifact specify it should be used by default
+		// otherwise how does the artifact specify it should be used by default
 		//
-		// - what is the preference for this type of library to use (shared - shared, static - static...)
+		// - what is the preference for this type of library to use (shared -
+		// shared, static - static...)
 
 		// library.getType()
 		String binding = dependency.getNarInfo().getBinding(
@@ -227,25 +208,18 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		ILibrary.STATIC);
 		return binding;
 	}
-	
-	public File getArtifactDirectory(NarArtifact dependency, File unpackDirectory )
-	{
+
+	public File getArtifactDirectory(NarArtifact dependency, File unpackDirectory) {
 		File targetDirectory = dependency.getNarInfo().getTargetDirectory();
-		if ( targetDirectory != null ) {
+		if (targetDirectory != null) {
 			return targetDirectory;
-		}
-		else
-		{
+		} else {
 			return unpackDirectory;
 		}
 	}
 
-	private List<AttachedNarArtifact> getAttachedNarArtifacts(
-			NarArtifact dependency, AOL aol, String type)
-			throws MojoExecutionException, MojoFailureException {
-		getLog().debug(
-				"GetNarDependencies for " + dependency + ", aol: " + aol
-						+ ", type: " + type);
+	private List<AttachedNarArtifact> getAttachedNarArtifacts(NarArtifact dependency, AOL aol, String type) throws MojoExecutionException, MojoFailureException {
+		getLog().debug("GetNarDependencies for " + dependency + ", aol: " + aol + ", type: " + type);
 		List<AttachedNarArtifact> artifactList = new ArrayList<AttachedNarArtifact>();
 		NarInfo narInfo = dependency.getNarInfo();
 		String[] nars = narInfo.getAttachedNars(aol, type);
@@ -266,24 +240,16 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 						// translate for instance g++ to gcc...
 						AOL aolString = narInfo.getAOL(aol);
 						if (aolString != null) {
-							classifier = NarUtil.replace("${aol}",
-									aolString.toString(), classifier);
+							classifier = NarUtil.replace("${aol}", aolString.toString(), classifier);
 						}
-						String version = nar.length >= 5 ? nar[4].trim()
-								: dependency.getVersion();
-						artifactList.add(new AttachedNarArtifact(groupId,
-								artifactId, version, dependency.getScope(),
-								ext, classifier, dependency.isOptional(),
+						String version = nar.length >= 5 ? nar[4].trim() : dependency.getVersion();
+						artifactList.add(new AttachedNarArtifact(groupId, artifactId, version, dependency.getScope(), ext, classifier, dependency.isOptional(),
 								dependency.getFile()));
 					} catch (InvalidVersionSpecificationException e) {
-						throw new MojoExecutionException(
-								"Error while reading nar file for dependency "
-										+ dependency, e);
+						throw new MojoExecutionException("Error while reading nar file for dependency " + dependency, e);
 					}
 				} else {
-					getLog().warn(
-							"nars property in " + dependency.getArtifactId()
-									+ " contains invalid field: '" + nars[j]
+					getLog().warn("nars property in " + dependency.getArtifactId() + " contains invalid field: '" + nars[j]
 					// + "' for type: " + type
 					);
 				}
@@ -293,10 +259,8 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 	}
 
 	@SuppressWarnings("deprecation")
-	public final void downloadAttachedNars(
-			List<AttachedNarArtifact> dependencies)
-			throws MojoExecutionException, MojoFailureException {
-		getLog().debug( "Download for NarDependencies {" );
+	public final void downloadAttachedNars(List<AttachedNarArtifact> dependencies) throws MojoExecutionException, MojoFailureException {
+		getLog().debug("Download for NarDependencies {");
 		for (Iterator<AttachedNarArtifact> i = dependencies.iterator(); i.hasNext();) {
 			getLog().debug("  - " + (i.next()));
 		}
@@ -317,8 +281,8 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 		}
 	}
 
-	public void prepareNarArtifacts(final ConfiguratorContext context,
-			IMavenProjectFacade facade, IProgressMonitor monitor) throws MojoExecutionException, CoreException, MojoFailureException {
+	public void prepareNarArtifacts(final ConfiguratorContext context, IMavenProjectFacade facade, IProgressMonitor monitor) throws MojoExecutionException,
+			CoreException, MojoFailureException {
 		narDependencies = new LinkedList<NarArtifact>();
 		for (Iterator<Artifact> i = getArtifacts().iterator(); i.hasNext();) {
 			Artifact dependency = i.next();
@@ -330,8 +294,7 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 			if (eclipseLayout != null) {
 				layout = eclipseLayout;
 				narInfo = getNarInfo(dependency, eclipseLayout);
-			}
-			else {
+			} else {
 				layout = getLayout();
 				narInfo = getNarInfo(dependency);
 			}
@@ -340,31 +303,26 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 				narDependencies.add(new NarArtifact(dependency, narInfo, layout));
 			}
 		}
-		getLog().debug(
-				"Dependencies contained " + narDependencies.size()
-						+ " NAR artifacts.");		
+		getLog().debug("Dependencies contained " + narDependencies.size() + " NAR artifacts.");
 	}
 
-	private EclipseNarLayout resolveEclipseProject(final Artifact artifact, final ConfiguratorContext context,
-			IMavenProjectFacade facade, IProgressMonitor monitor) throws CoreException {
+	private EclipseNarLayout resolveEclipseProject(final Artifact artifact, final ConfiguratorContext context, IMavenProjectFacade facade,
+			IProgressMonitor monitor) throws CoreException {
 		final IMavenProjectRegistry projectManager = context.getProjectManager();
 		if (!Artifact.SCOPE_COMPILE.equals(artifact.getScope()) && !Artifact.SCOPE_TEST.equals(artifact.getScope())) {
 			return null;
 		}
-		IMavenProjectFacade dependency = projectManager.getMavenProject(
-				artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion());
+		IMavenProjectFacade dependency = projectManager.getMavenProject(artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion());
 		if (dependency == null) {
 			return null;
 		}
 		if (dependency.getProject().equals(facade.getProject())) {
 			return null;
 		}
-		getLog().debug("Found dependency project "
-				+ dependency.getProject().getName());
+		getLog().debug("Found dependency project " + dependency.getProject().getName());
 		EclipseNarLayout layout = new EclipseNarLayout(getLog());
 		layout.setProject(dependency);
-		List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context,
-				dependency, monitor);
+		List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context, dependency, monitor);
 		getLog().debug("Found " + narExecutions.size() + " compile executions");
 		com.github.sdedwards.m2e_nar.internal.model.NarBuildArtifact artifactSettings = null;
 		for (NarExecution narSettings : narExecutions) {
@@ -383,5 +341,5 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 			return layout;
 		}
 		return null;
-	}	
+	}
 }

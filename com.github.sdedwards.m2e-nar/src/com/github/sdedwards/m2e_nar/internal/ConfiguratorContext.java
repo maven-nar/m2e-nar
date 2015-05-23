@@ -25,7 +25,7 @@ import org.eclipse.m2e.core.project.IMavenProjectRegistry;
 public class ConfiguratorContext {
 	private final IMaven maven;
 	private final IMavenProjectRegistry projectManager;
-	
+
 	public ConfiguratorContext(final IMaven maven, final IMavenProjectRegistry projectManager) {
 		this.maven = maven;
 		this.projectManager = projectManager;

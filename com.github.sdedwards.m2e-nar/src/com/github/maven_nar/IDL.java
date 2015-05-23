@@ -26,10 +26,9 @@ package com.github.maven_nar;
  */
 public class IDL extends Compiler {
 
-	public IDL()
-	{
+	public IDL() {
 	}
-	
+
 	@Override
 	protected String getLanguage() {
 		return "idl";

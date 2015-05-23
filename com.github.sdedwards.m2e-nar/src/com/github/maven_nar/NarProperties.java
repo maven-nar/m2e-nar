@@ -34,67 +34,54 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.PropertyUtils;
 
 public class NarProperties {
-	
+
 	private final static String AOL_PROPERTIES = "aol.properties";
 	private final static String CUSTOM_AOL_PROPERTY_KEY = "nar.aolProperties";
 	private Properties properties;
-	
-	public NarProperties(MavenProject project, Class<?> classNearResource) throws MojoFailureException
-	{
+
+	public NarProperties(MavenProject project, Class<?> classNearResource) throws MojoFailureException {
 		Properties defaults = null;
-		final InputStream stream = classNearResource.getResourceAsStream( AOL_PROPERTIES );
-		if (stream != null)
-		{
-			defaults = PropertyUtils.loadProperties( stream );
-		}	
-        if ( defaults == null )
-        {
-            throw new MojoFailureException( "NAR: Could not load default properties file: '"+AOL_PROPERTIES+"'." );
-        }
-        properties = new Properties(defaults);
-        FileInputStream fis = null;
-        String customPropertyLocation = null;
-        try 
-        {
-        	if (project != null) {
-        		customPropertyLocation = project.getProperties().getProperty(CUSTOM_AOL_PROPERTY_KEY);
-        		if (customPropertyLocation == null) {
-        		    // Try and read from the system property in case it's specified there
-        		    customPropertyLocation = System.getProperties().getProperty(CUSTOM_AOL_PROPERTY_KEY);
-        		}
-        		fis = new FileInputStream(customPropertyLocation != null ?
-        		                          customPropertyLocation : project.getBasedir()+File.separator+AOL_PROPERTIES);
-        		properties.load( fis );
-        	}
-		} 
-        catch (FileNotFoundException e) 
-        {
-			if (customPropertyLocation != null) {
-			    // We tried loading from a custom location - so throw the exception
-			    throw new MojoFailureException( "NAR: Could not load custom properties file: '"+customPropertyLocation+"'." );
-			}
-		} 
-        catch (IOException e) 
-        {
-			// ignore (FIXME)
+		final InputStream stream = classNearResource.getResourceAsStream(AOL_PROPERTIES);
+		if (stream != null) {
+			defaults = PropertyUtils.loadProperties(stream);
 		}
-        finally
-        {
-            try
-            {
-                if ( fis != null )
-                {
-                    fis.close();
-                }
-            }
-            catch ( IOException e )
-            {
-                // ignore
-            }
-        }
+		if (defaults == null) {
+			throw new MojoFailureException("NAR: Could not load default properties file: '" + AOL_PROPERTIES + "'.");
+		}
+		properties = new Properties(defaults);
+		FileInputStream fis = null;
+		String customPropertyLocation = null;
+		try {
+			if (project != null) {
+				customPropertyLocation = project.getProperties().getProperty(CUSTOM_AOL_PROPERTY_KEY);
+				if (customPropertyLocation == null) {
+					// Try and read from the system property in case it's
+					// specified there
+					customPropertyLocation = System.getProperties().getProperty(CUSTOM_AOL_PROPERTY_KEY);
+				}
+				fis = new FileInputStream(customPropertyLocation != null ? customPropertyLocation : project.getBasedir() + File.separator + AOL_PROPERTIES);
+				properties.load(fis);
+			}
+		} catch (FileNotFoundException e) {
+			if (customPropertyLocation != null) {
+				// We tried loading from a custom location - so throw the
+				// exception
+				throw new MojoFailureException("NAR: Could not load custom properties file: '" + customPropertyLocation + "'.");
+			}
+		} catch (IOException e) {
+			// ignore (FIXME)
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+			} catch (IOException e) {
+				// ignore
+			}
+		}
 
 	}
-	
+
 	public String getProperty(String key) {
 		return properties.getProperty(key);
 	}
