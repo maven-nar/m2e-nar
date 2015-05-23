@@ -2,7 +2,7 @@
 <feature
       id="com.github.sdedwards.m2e-nar.feature"
       label="M2E NAR"
-      version="1.0.1"
+      version="1.0.2.qualifier"
       provider-name="sdedwards">
 
    <description>

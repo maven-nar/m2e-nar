@@ -21,7 +21,7 @@ under the License.
 
 	<groupId>com.github.sdedwards.m2e-nar</groupId>
 	<artifactId>m2e-nar</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>NAR Maven Plugin Integration for Eclipse (parent)</name>
