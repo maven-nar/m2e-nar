@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.github.sdedwards.m2e-nar.feature_1.0.1.qualifier.jar" id="com.github.sdedwards.m2e-nar.feature" version="1.0.1.qualifier">
+   <feature url="features/com.github.sdedwards.m2e-nar.feature_1.0.1.jar" id="com.github.sdedwards.m2e-nar.feature" version="1.0.1">
       <category name="m2e-nar"/>
    </feature>
    <category-def name="m2e-nar" label="NAR Maven Plugin Integration for Eclipse">
