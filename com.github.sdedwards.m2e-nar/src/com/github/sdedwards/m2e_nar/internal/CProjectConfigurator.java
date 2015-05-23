@@ -75,46 +75,35 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 	public static final String CONFIGURATOR_ID = "com.github.sdedwards.m2e_nar.cConfigurator";
 
 	@Override
-	public void configure(ProjectConfigurationRequest request,
-			IProgressMonitor monitor) throws CoreException {
+	public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
 
-		final ConfiguratorContext context = new ConfiguratorContext(maven,
-				projectManager);
+		final ConfiguratorContext context = new ConfiguratorContext(maven, projectManager);
 
 		IProject project = request.getProject();
 
-		monitor.setTaskName(Messages.CProjectConfigurator_task_name
-				+ project.getName());
+		monitor.setTaskName(Messages.CProjectConfigurator_task_name + project.getName());
 
 		logger.info("configure");
 
-		ICProjectDescriptionManager mngr = CoreModel.getDefault()
-				.getProjectDescriptionManager();
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 
 		// Set the first created configuration as active.
 		boolean setActive = true;
 		final IMavenProjectFacade facade = request.getMavenProjectFacade();
-		List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context,
-				facade, monitor);
-		narExecutions.addAll(MavenUtils.buildTestCompileNarExecutions(context,
-				facade, monitor));
+		List<NarExecution> narExecutions = MavenUtils.buildCompileNarExecutions(context, facade, monitor);
+		narExecutions.addAll(MavenUtils.buildTestCompileNarExecutions(context, facade, monitor));
 		for (NarExecution narSettings : narExecutions) {
 			if (!narSettings.isSkip()) {
 				final String os = narSettings.getOS();
 				final String linkerName = narSettings.getLinkerName();
-				final AbstractSettingsSynchroniser synchro = SynchroniserFactory
-						.getSettingsSynchroniser(os, linkerName);
+				final AbstractSettingsSynchroniser synchro = SynchroniserFactory.getSettingsSynchroniser(os, linkerName);
 				final String toolchain = synchro.getToolchain();
-				for (NarBuildArtifact artifactSettings : narSettings
-						.getArtifactSettings()) {
+				for (NarBuildArtifact artifactSettings : narSettings.getArtifactSettings()) {
 					final String configName = artifactSettings.getConfigName();
-					final String cdtArtefactType = CdtUtils
-							.convertArtefactType(artifactSettings.getType());
+					final String cdtArtefactType = CdtUtils.convertArtefactType(artifactSettings.getType());
 					IToolChain tc = getToolChain(toolchain, cdtArtefactType);
-					ICProjectDescription desc = getCdtProject(project, tc,
-							cdtArtefactType, monitor);
-					ICConfigurationDescription cfg = getCdtMavenConfig(project,
-							desc, tc, cdtArtefactType, configName, setActive, monitor);
+					ICProjectDescription desc = getCdtProject(project, tc, cdtArtefactType, monitor);
+					ICConfigurationDescription cfg = getCdtMavenConfig(project, desc, tc, cdtArtefactType, configName, setActive, monitor);
 					setActive = false;
 					synchro.fullSync(cfg, artifactSettings);
 					mngr.setProjectDescription(project, desc);
@@ -132,11 +121,9 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 		ICommand mavenBuilder = null;
 		ArrayList<ICommand> newSpec = new ArrayList<ICommand>();
 		for (ICommand command : description.getBuildSpec()) {
-			if (ManagedCProjectNature.getBuilderID().equals(command.getBuilderName()) &&
-					mavenBuilder == null) {
+			if (ManagedCProjectNature.getBuilderID().equals(command.getBuilderName()) && mavenBuilder == null) {
 				cdtBuilder = command;
-			}
-			else {
+			} else {
 				newSpec.add(command);
 			}
 			if (IMavenConstants.BUILDER_ID.equals(command.getBuilderName())) {
@@ -154,9 +141,7 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 	}
 
 	@Override
-	public AbstractBuildParticipant getBuildParticipant(
-			IMavenProjectFacade projectFacade, MojoExecution execution,
-			IPluginExecutionMetadata executionMetadata) {
+	public AbstractBuildParticipant getBuildParticipant(IMavenProjectFacade projectFacade, MojoExecution execution, IPluginExecutionMetadata executionMetadata) {
 		final String goal = execution.getGoal();
 		if ("nar-validate".equals(goal)) {
 			return new MojoExecutionBuildParticipant(execution, false, true);
@@ -197,19 +182,16 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 		} else if ("nar-test".equals(goal)) {
 			return null;
 		}
-		return super.getBuildParticipant(projectFacade, execution,
-				executionMetadata);
+		return super.getBuildParticipant(projectFacade, execution, executionMetadata);
 	}
 
 	@Override
-	public void unconfigure(ProjectConfigurationRequest request,
-			IProgressMonitor monitor) throws CoreException {
+	public void unconfigure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
 		super.unconfigure(request, monitor);
 		// removeMavenClasspathContainer(request.getProject());
 	}
 
-	protected void addCppNature(IProject project, IProgressMonitor monitor)
-			throws CoreException {
+	protected void addCppNature(IProject project, IProgressMonitor monitor) throws CoreException {
 		CProjectNature.addCNature(project, monitor);
 	}
 
@@ -226,8 +208,7 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 		 */
 
 		// Filter off unsupported and system toolchains
-		if (tc == null || !tc.isSupported() || tc.isAbstract()
-				|| tc.isSystemObject())
+		if (tc == null || !tc.isSupported() || tc.isAbstract() || tc.isSystemObject())
 			return false;
 
 		// Check for platform compatibility
@@ -240,9 +221,7 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 
 	protected List<IConfiguration> getCfgs(IToolChain tc, String artefactType) {
 		List<IConfiguration> out = new ArrayList<IConfiguration>();
-		IConfiguration[] cfgs = ManagedBuildManager.getExtensionConfigurations(
-				tc, ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID,
-				artefactType);
+		IConfiguration[] cfgs = ManagedBuildManager.getExtensionConfigurations(tc, ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artefactType);
 		if (cfgs != null) {
 			for (IConfiguration cfg : cfgs) {
 				if (isValid(cfg)) {
@@ -278,13 +257,10 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 	 * } } return ls.toArray(new CfgHolder[ls.size()]); }
 	 */
 
-	private IToolChain getToolChain(final String toolChain,
-			final String artefactType) throws CoreException {
+	private IToolChain getToolChain(final String toolChain, final String artefactType) throws CoreException {
 		// Find the tool chains supported on our system for the selected
 		// artefact type
-		IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(
-				ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID,
-				artefactType, true);
+		IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artefactType, true);
 		// Find the tool chain
 		IToolChain tc = null;
 		for (IToolChain tc2 : tcs) {
@@ -294,66 +270,47 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 			}
 		}
 		if (tc == null) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Could not find valid tool chain \"" + toolChain + "\""));
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Could not find valid tool chain \"" + toolChain + "\""));
 		}
 		return tc;
 	}
 
-	private ICProjectDescription getCdtProject(IProject project, IToolChain tc,
-			String artefactType, IProgressMonitor monitor) throws CoreException {
+	private ICProjectDescription getCdtProject(IProject project, IToolChain tc, String artefactType, IProgressMonitor monitor) throws CoreException {
 		try {
-			ICProjectDescriptionManager mngr = CoreModel.getDefault()
-					.getProjectDescriptionManager();
+			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 			if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				MavenNarPlugin.getDefault().log(
-						"Configuring project with " + tc.getUniqueRealName()
-								+ " tool chain");
+				MavenNarPlugin.getDefault().log("Configuring project with " + tc.getUniqueRealName() + " tool chain");
 				// Add the C++ Nature
-				CCorePlugin.getDefault().convertProjectToNewCC(project,
-						ManagedBuildManager.CFG_DATA_PROVIDER_ID, monitor);
-				ICProjectDescription des = mngr.createProjectDescription(
-						project, false, false);
-				IManagedBuildInfo info = ManagedBuildManager
-						.createBuildInfo(project);
+				CCorePlugin.getDefault().convertProjectToNewCC(project, ManagedBuildManager.CFG_DATA_PROVIDER_ID, monitor);
+				ICProjectDescription des = mngr.createProjectDescription(project, false, false);
+				IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 				List<IConfiguration> cfgs = getCfgs(tc, artefactType);
 
 				if (cfgs.isEmpty()) {
-					throw new CoreException(new Status(IStatus.ERROR,
-							MavenNarPlugin.PLUGIN_ID,
-							"Cannot find any configurations"));
+					throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Cannot find any configurations"));
 				}
 				IConfiguration cf = cfgs.get(0);
-				IManagedProject mProj = ManagedBuildManager
-						.createManagedProject(project, cf.getProjectType());
+				IManagedProject mProj = ManagedBuildManager.createManagedProject(project, cf.getProjectType());
 				info.setManagedProject(mProj);
 				return des;
 			} else {
-				ICProjectDescription des = mngr.getProjectDescription(project,
-						true);
+				ICProjectDescription des = mngr.getProjectDescription(project, true);
 				return des;
 			}
 		} catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Cannot create CDT managed project", e));
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Cannot create CDT managed project", e));
 		}
 	}
 
-	private ICConfigurationDescription getCdtMavenConfig(IProject project,
-			ICProjectDescription des, IToolChain tc, String artefactType,
-			String name, boolean setActive, IProgressMonitor monitor) throws CoreException {
-		IManagedProject mProj = ManagedBuildManager.getBuildInfo(project)
-				.getManagedProject();
+	private ICConfigurationDescription getCdtMavenConfig(IProject project, ICProjectDescription des, IToolChain tc, String artefactType, String name,
+			boolean setActive, IProgressMonitor monitor) throws CoreException {
+		IManagedProject mProj = ManagedBuildManager.getBuildInfo(project).getManagedProject();
 		ICConfigurationDescription mavenCfg = des.getConfigurationByName(name);
 		if (mavenCfg == null) {
 			List<IConfiguration> cfgs = getCfgs(tc, artefactType);
 
 			if (cfgs.isEmpty()) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						MavenNarPlugin.PLUGIN_ID,
-						"Cannot find any configurations"));
+				throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Cannot find any configurations"));
 			}
 			monitor.worked(10);
 			monitor.worked(10);
@@ -366,13 +323,8 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 			int work = 50 / cfgs.size();
 
 			for (IConfiguration cfg : cfgs) {
-				IBuildProperty b = cfg.getBuildProperties().getProperty(
-						ManagedBuildManager.BUILD_TYPE_PROPERTY_ID);
-				if (cfgRelease == null
-						&& b != null
-						&& b.getValue() != null
-						&& ManagedBuildManager.BUILD_TYPE_PROPERTY_RELEASE
-								.equals(b.getValue().getId())) {
+				IBuildProperty b = cfg.getBuildProperties().getProperty(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID);
+				if (cfgRelease == null && b != null && b.getValue() != null && ManagedBuildManager.BUILD_TYPE_PROPERTY_RELEASE.equals(b.getValue().getId())) {
 					cfgRelease = cfg;
 				}
 				if (cfgFirst == null) {
@@ -384,14 +336,11 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 				if (cfgRelease != null) {
 					cfgFirst = cfgRelease;
 				}
-				MavenNarPlugin.getDefault().log(
-						"Creating configuration " + name);
-				IConfiguration newCfg = createConfiguration(cfgFirst, mProj,
-						des);
+				MavenNarPlugin.getDefault().log("Creating configuration " + name);
+				IConfiguration newCfg = createConfiguration(cfgFirst, mProj, des);
 				newCfg.setName(name);
 				newCfg.setDescription("m2e generated configuration");
-				mavenCfg = ManagedBuildManager
-						.getDescriptionForConfiguration(newCfg);
+				mavenCfg = ManagedBuildManager.getDescriptionForConfiguration(newCfg);
 			}
 		}
 		if (mavenCfg != null) {
@@ -400,29 +349,23 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 			}
 			return mavenCfg;
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID, "Cannot find any configurations"));
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Cannot find any configurations"));
 		}
 		// mngr.setProjectDescription(project, des);
 	}
 
-	private IConfiguration createConfiguration(IConfiguration cfg,
-			IManagedProject proj, ICProjectDescription des)
-			throws WriteAccessException, CoreException {
+	private IConfiguration createConfiguration(IConfiguration cfg, IManagedProject proj, ICProjectDescription des) throws WriteAccessException, CoreException {
 		String id = ManagedBuildManager.calculateChildId(cfg.getId(), null);
 		// CProjectDescriptionManager.getInstance();
-		Configuration config = new Configuration((ManagedProject) proj,
-				(Configuration) cfg, id, false, true);
+		Configuration config = new Configuration((ManagedProject) proj, (Configuration) cfg, id, false, true);
 		CConfigurationData data = config.getConfigurationData();
-		ICConfigurationDescription cfgDes = des.createConfiguration(
-				ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+		ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		config.setConfigurationDescription(cfgDes);
 		config.exportArtifactInfo();
 
 		// Force internal builder
 		IBuilder internalBuilder = ManagedBuildManager.getInternalBuilder();
-		config.changeBuilder(internalBuilder, internalBuilder.getId(),
-				internalBuilder.getName());
+		config.changeBuilder(internalBuilder, internalBuilder.getId(), internalBuilder.getName());
 
 		// IBuilder bld = config.getEditableBuilder();
 		// if (bld != null) { bld.setManagedBuildOn(true); }

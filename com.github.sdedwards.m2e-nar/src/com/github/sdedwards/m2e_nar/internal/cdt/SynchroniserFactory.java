@@ -27,8 +27,7 @@ import com.github.sdedwards.m2e_nar.MavenNarPlugin;
 
 public final class SynchroniserFactory {
 
-	public static AbstractSettingsSynchroniser getSettingsSynchroniser(
-			final String os, final String linkerName) throws CoreException {
+	public static AbstractSettingsSynchroniser getSettingsSynchroniser(final String os, final String linkerName) throws CoreException {
 		if ("Windows".equals(os)) {
 			if ("msvc".equals(linkerName)) {
 				// TODO "Microsoft Visual C++";
@@ -90,9 +89,6 @@ public final class SynchroniserFactory {
 				// TODO "AIX GCC";
 			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR,
-				MavenNarPlugin.PLUGIN_ID,
-				"Unknown os-linker combination \"" + os + "-" + linkerName
-						+ "\""));
+		throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Unknown os-linker combination \"" + os + "-" + linkerName + "\""));
 	}
 }

@@ -33,39 +33,32 @@ import com.github.sdedwards.m2e_nar.internal.model.NarCompiler.OptimizationLevel
 
 @SuppressWarnings("restriction")
 public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchroniser {
-	
+
 	private static final String defaultFlags = "-c";
 	private static final boolean isPICMeaningful = System.getProperty("os.name").indexOf("Windows") < 0;
 	private static final String noExceptions = "-fno-exceptions";
 
 	protected enum GnuOptimizationLevel {
-		NONE,
-		OPTIMIZE,
-		MORE,
-		MOST,
-		SIZE
+		NONE, OPTIMIZE, MORE, MOST, SIZE
 	}
 
 	protected enum GnuDebugLevel {
-		NONE,
-		MINIMAL,
-		DEFAULT,
-		MAX
+		NONE, MINIMAL, DEFAULT, MAX
 	}
 
 	public AbstractGnuCompilerSynchroniser() {
 	}
 
 	public abstract NarCompiler getCompilerSettings(NarBuildArtifact settings);
-	
+
 	public abstract String getToolId();
-	
+
 	public abstract String getUndefOptionId();
 
 	public abstract String getOptLevelOptionId();
-	
+
 	public abstract String getOptLevel(GnuOptimizationLevel optLevel);
-	
+
 	public abstract String getDebugLevelOptionId();
 
 	public abstract String getDebugLevel(GnuDebugLevel debugLevel);
@@ -73,50 +66,48 @@ public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchro
 	public abstract String getOtherFlagsOptionId();
 
 	public abstract String getFPICOptionId();
-	
+
 	public String getFlags(final NarCompiler compilerSettings) {
 		final StringBuilder flags = new StringBuilder();
-		
+
 		flags.append(defaultFlags);
 		for (String option : compilerSettings.getOptions()) {
 			flags.append(" ");
 			flags.append(option);
 		}
-		
+
 		// Add no exceptions flag if required
 		if (!compilerSettings.isExceptions()) {
 			flags.append(" ");
 			flags.append(noExceptions);
 		}
-		
+
 		return flags.toString();
 	}
 
 	@Override
-	public void fullSync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException {
-		BuildConfigurationData confData = (BuildConfigurationData)cfg.getConfigurationData();
+	public void fullSync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException {
+		BuildConfigurationData confData = (BuildConfigurationData) cfg.getConfigurationData();
 		IConfiguration managedConf = confData.getConfiguration();
 		for (final ITool tool : managedConf.getToolsBySuperClassId(getToolId())) {
 			tool.setToolCommand(getCompilerSettings(artifactSettings).getName());
-		}		
+		}
 		final OptionSetter optionSetter = new OptionSetter(managedConf, getToolId());
 
 		setUndefinedSymbols(optionSetter, artifactSettings);
 		setOptimization(optionSetter, artifactSettings);
 		setDebug(optionSetter, artifactSettings);
-		setOptions(optionSetter, artifactSettings);		
+		setOptions(optionSetter, artifactSettings);
 	}
 
 	@Override
-	public void pathsOnlySync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException {
+	public void pathsOnlySync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException {
 	}
-	
+
 	protected void setUndefinedSymbols(final OptionSetter optionSetter, final NarBuildArtifact settings) throws CoreException {
 		List<String> undefines = getCompilerSettings(settings).getUndefines();
 		String[] undefineArray = undefines.toArray(new String[undefines.size()]);
-		
+
 		optionSetter.setOption(getUndefOptionId(), undefineArray);
 	}
 
@@ -147,7 +138,7 @@ public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchro
 			break;
 		case UNSAFE:
 			levelGcc = GnuOptimizationLevel.MOST;
-			break;			
+			break;
 		}
 		optionSetter.setOption(getOptLevelOptionId(), getOptLevel(levelGcc));
 	}
@@ -158,15 +149,15 @@ public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchro
 
 		optionSetter.setOption(getDebugLevelOptionId(), getDebugLevel(debugLevel));
 	}
-	
+
 	protected void setOptions(final OptionSetter optionSetter, final NarBuildArtifact settings) throws CoreException {
 		// Clear all other options
 		optionSetter.clearOptions();
-		
+
 		// Get the flags
 		String flags = getFlags(getCompilerSettings(settings));
 		optionSetter.setOption(getOtherFlagsOptionId(), flags.trim());
-		
+
 		// Set fPIC option if required
 		if (isPICMeaningful && settings.isSharedLibrary()) {
 			optionSetter.setOption(getFPICOptionId(), true);

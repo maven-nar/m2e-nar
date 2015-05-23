@@ -30,38 +30,32 @@ import org.apache.maven.artifact.DefaultArtifact;
 /**
  * @author Mark Donszelmann
  */
-public class NarArtifact
-    extends DefaultArtifact
-{
+public class NarArtifact extends DefaultArtifact {
 
-    private NarInfo narInfo;
-    private NarLayout narLayout;
+	private NarInfo narInfo;
+	private NarLayout narLayout;
 
-    public NarArtifact( Artifact dependency, NarInfo narInfo, NarLayout narLayout )
-    {
-        super( dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersionRange(),
-               dependency.getScope(), dependency.getType(), dependency.getClassifier(),
-               dependency.getArtifactHandler(), dependency.isOptional() );
-        this.setFile( dependency.getFile() );
-        this.narInfo = narInfo;
-        this.narLayout = narLayout;
-    }
+	public NarArtifact(Artifact dependency, NarInfo narInfo, NarLayout narLayout) {
+		super(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersionRange(), dependency.getScope(), dependency.getType(), dependency
+				.getClassifier(), dependency.getArtifactHandler(), dependency.isOptional());
+		this.setFile(dependency.getFile());
+		this.narInfo = narInfo;
+		this.narLayout = narLayout;
+	}
 
-    public final NarInfo getNarInfo()
-    {
-        return narInfo;
-    }
+	public final NarInfo getNarInfo() {
+		return narInfo;
+	}
 
-    public final NarLayout getNarLayout()
-    {
-        return narLayout;
-    }
+	public final NarLayout getNarLayout() {
+		return narLayout;
+	}
 
-    public String getBaseFilename() {
-        return getArtifactId()+"-"+getBaseVersion()+"-"+getClassifier();
-    }
+	public String getBaseFilename() {
+		return getArtifactId() + "-" + getBaseVersion() + "-" + getClassifier();
+	}
 
-    public final File getTargetDirectory( ) {
-    	return getNarInfo().getTargetDirectory();
-    }
+	public final File getTargetDirectory() {
+		return getNarInfo().getTargetDirectory();
+	}
 }

@@ -44,406 +44,368 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author Mark Donszelmann
  */
-public class Linker implements ILinker
-{
+public class Linker implements ILinker {
 
-    /**
-     * The Linker Some choices are: "msvc", "g++", "CC", "icpc", ... Default is Architecture-OS-Linker specific: FIXME:
-     * table missing
-     * 
-     * @parameter default-value=""
-     */
-    private String name;
+	/**
+	 * The Linker Some choices are: "msvc", "g++", "CC", "icpc", ... Default is
+	 * Architecture-OS-Linker specific: FIXME: table missing
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String name;
 
-    /**
-     * Path location of the linker tool
-     *
-     * @parameter default-value=""
-     */
-    private String toolPath;
+	/**
+	 * Path location of the linker tool
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String toolPath;
 
-    /**
-     * Enables or disables incremental linking.
-     * 
-     * @parameter default-value="false"
-     * @required
-     */
-    private boolean incremental = false;
+	/**
+	 * Enables or disables incremental linking.
+	 * 
+	 * @parameter default-value="false"
+	 * @required
+	 */
+	private boolean incremental = false;
 
-    /**
-     * Enables or disables the production of a map file.
-     * 
-     * @parameter default-value="false"
-     * @required
-     */
-    private boolean map = false;
+	/**
+	 * Enables or disables the production of a map file.
+	 * 
+	 * @parameter default-value="false"
+	 * @required
+	 */
+	private boolean map = false;
 
-    /**
-     * Options for the linker Defaults to Architecture-OS-Linker specific values. FIXME table missing
-     * 
-     * @parameter default-value=""
-     */
-    private List options;
+	/**
+	 * Options for the linker Defaults to Architecture-OS-Linker specific
+	 * values. FIXME table missing
+	 * 
+	 * @parameter default-value=""
+	 */
+	private List options;
 
-    /**
-     * Options for the linker as a whitespace separated list. Defaults to Architecture-OS-Linker specific values. Will
-     * work in combination with &lt;options&gt;.
-     * 
-     * @parameter default-value=""
-     */
-    private String optionSet;
+	/**
+	 * Options for the linker as a whitespace separated list. Defaults to
+	 * Architecture-OS-Linker specific values. Will work in combination with
+	 * &lt;options&gt;.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String optionSet;
 
-    /**
-     * Clears default options
-     * 
-     * @parameter default-value="false"
-     * @required
-     */
-    private boolean clearDefaultOptions;
+	/**
+	 * Clears default options
+	 * 
+	 * @parameter default-value="false"
+	 * @required
+	 */
+	private boolean clearDefaultOptions;
 
-    /**
-     * Adds libraries to the linker.
-     * 
-     * @parameter default-value=""
-     */
-    private List/* <Lib> */libs;
+	/**
+	 * Adds libraries to the linker.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private List/* <Lib> */libs;
 
-    /**
-     * Adds libraries to the linker. Will work in combination with &lt;libs&gt;. The format is comma separated,
-     * colon-delimited values (name:type:dir), like "myLib:shared:/home/me/libs/, otherLib:static:/some/path".
-     * 
-     * @parameter default-value=""
-     */
-    private String libSet;
+	/**
+	 * Adds libraries to the linker. Will work in combination with &lt;libs&gt;.
+	 * The format is comma separated, colon-delimited values (name:type:dir),
+	 * like "myLib:shared:/home/me/libs/, otherLib:static:/some/path".
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String libSet;
 
-    /**
-     * Adds system libraries to the linker.
-     * 
-     * @parameter default-value=""
-     */
-    private List/* <SysLib> */sysLibs;
+	/**
+	 * Adds system libraries to the linker.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private List/* <SysLib> */sysLibs;
 
-    /**
-     * Adds system libraries to the linker. Will work in combination with &lt;sysLibs&gt;. The format is comma
-     * separated, colon-delimited values (name:type), like "dl:shared, pthread:shared".
-     * 
-     * @parameter default-value=""
-     */
-    private String sysLibSet;
+	/**
+	 * Adds system libraries to the linker. Will work in combination with
+	 * &lt;sysLibs&gt;. The format is comma separated, colon-delimited values
+	 * (name:type), like "dl:shared, pthread:shared".
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String sysLibSet;
 
-    /**
-     * <p>
-     * Specifies the link ordering of libraries that come from nar dependencies. The format is a comma separated list of
-     * dependency names, given as groupId:artifactId.
-     * </p>
-     * <p>
-     * Example: &lt;narDependencyLibOrder&gt;someGroup:myProduct, other.group:productB&lt;narDependencyLibOrder&gt;
-     * </p>
-     * 
-     * @parameter default-value=""
-     */
-    private String narDependencyLibOrder;
+	/**
+	 * <p>
+	 * Specifies the link ordering of libraries that come from nar dependencies.
+	 * The format is a comma separated list of dependency names, given as
+	 * groupId:artifactId.
+	 * </p>
+	 * <p>
+	 * Example: &lt;narDependencyLibOrder&gt;someGroup:myProduct,
+	 * other.group:productB&lt;narDependencyLibOrder&gt;
+	 * </p>
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String narDependencyLibOrder;
 
-    private final Log log;
+	private final Log log;
 
-    private AbstractCompileMojo mojo;
+	private AbstractCompileMojo mojo;
 
-    public Linker()
-    {
-        // default constructor for use as TAG
-        this( null );
-    }
+	public Linker() {
+		// default constructor for use as TAG
+		this(null);
+	}
 
-    public Linker( final Log log )
-    {
-        this.log = log;
-    }
+	public Linker(final Log log) {
+		this.log = log;
+	}
 
-    /**
-     * For use with specific named linker.
-     * 
-     * @param name
-     */
-    public Linker( String name, final Log log )
-    {
-        this.name = name;
-        this.log = log;
-    }
+	/**
+	 * For use with specific named linker.
+	 * 
+	 * @param name
+	 */
+	public Linker(String name, final Log log) {
+		this.name = name;
+		this.log = log;
+	}
 
-    public final void setAbstractCompileMojo( AbstractCompileMojo mojo )
-    {
-        this.mojo = mojo;
-    }
+	public final void setAbstractCompileMojo(AbstractCompileMojo mojo) {
+		this.mojo = mojo;
+	}
 
-    /* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#getName()
 	 */
-    public final String getName()
-    {
-        return name;
-    }
+	public final String getName() {
+		return name;
+	}
 
-    public final String getName( NarProperties properties, String prefix )
-        throws MojoFailureException, MojoExecutionException
-    {
-        if ( ( name == null ) && ( properties != null ) && ( prefix != null ) )
-        {
-            name = properties.getProperty( prefix + "linker" );
-        }
-        if ( name == null )
-        {
-            throw new MojoExecutionException( "NAR: One of two things may be wrong here:\n\n"
-                + "1. <Name> tag is missing inside the <Linker> tag of your NAR configuration\n\n"
-                + "2. no linker is defined in the aol.properties file for '" + prefix + "linker'\n" );
-        }
-        return name;
-    }
+	public final String getName(NarProperties properties, String prefix) throws MojoFailureException, MojoExecutionException {
+		if ((name == null) && (properties != null) && (prefix != null)) {
+			name = properties.getProperty(prefix + "linker");
+		}
+		if (name == null) {
+			throw new MojoExecutionException("NAR: One of two things may be wrong here:\n\n"
+					+ "1. <Name> tag is missing inside the <Linker> tag of your NAR configuration\n\n"
+					+ "2. no linker is defined in the aol.properties file for '" + prefix + "linker'\n");
+		}
+		return name;
+	}
 
-    public final String getVersion() 
-        throws MojoFailureException, MojoExecutionException
-    {
-        if ( name == null )
-        {
-            throw new MojoFailureException( "Cannot deduce linker version if name is null" );
-        }
+	public final String getVersion() throws MojoFailureException, MojoExecutionException {
+		if (name == null) {
+			throw new MojoFailureException("Cannot deduce linker version if name is null");
+		}
 
-        String version = null;
+		String version = null;
 
-        TextStream out = new StringTextStream();
-        TextStream err = new StringTextStream();
-        TextStream dbg = new StringTextStream();
+		TextStream out = new StringTextStream();
+		TextStream err = new StringTextStream();
+		TextStream dbg = new StringTextStream();
 
-        if ( name.equals( "g++" ) || name.equals( "gcc" ) )
-        {
-            NarUtil.runCommand( "gcc", new String[] { "--version" }, null, null, out, err, dbg, log );
-            Pattern p = Pattern.compile( "\\d+\\.\\d+\\.\\d+" );
-            Matcher m = p.matcher( out.toString() );
-            if ( m.find() )
-            {
-                version = m.group( 0 );
-            }
-        }
-        else if ( name.equals( "msvc" ) )
-        {
-            NarUtil.runCommand( "link", new String[] { "/?" }, null, null, out, err, dbg, log, true );
-            Pattern p = Pattern.compile( "\\d+\\.\\d+\\.\\d+(\\.\\d+)?" );
-            Matcher m = p.matcher( out.toString() );
-            if ( m.find() )
-            {
-                version = m.group( 0 );
-            }
-        }
-        else if ( name.equals( "icc" ) || name.equals( "icpc" ) )
-        {
-            NarUtil.runCommand( "icc", new String[] { "--version" }, null, null, out, err, dbg, log );
-            Pattern p = Pattern.compile( "\\d+\\.\\d+" );
-            Matcher m = p.matcher( out.toString() );
-            if ( m.find() )
-            {
-                version = m.group( 0 );
-            }
-        }
-        else if ( name.equals( "icl" ) )
-        {
-            NarUtil.runCommand( "icl", new String[] { "/QV" }, null, null, out, err, dbg, log );
-            Pattern p = Pattern.compile( "\\d+\\.\\d+" );
-            Matcher m = p.matcher( err.toString() );
-            if ( m.find() )
-            {
-                version = m.group( 0 );
-            }
-        }
-        else if ( name.equals( "CC" ) )
-        {
-        	NarUtil.runCommand( "CC", new String[] { "-V" }, null, null, out, err, dbg, log );
-        	Pattern p = Pattern.compile( "\\d+\\.d+" );
-        	Matcher m = p.matcher( err.toString() );
-        	if ( m.find() )
-        	{ 
-        		version = m.group( 0 ); 
-        	}
-        }
-        else
-        {
-            throw new MojoFailureException( "Cannot find version number for linker '" + name + "'" );
-        }
-        
-        if (version == null) {
-        	throw new MojoFailureException( "Cannot deduce version number from: " + out.toString() );
-        }
-        return version;
-    }
+		if (name.equals("g++") || name.equals("gcc")) {
+			NarUtil.runCommand("gcc", new String[] { "--version" }, null, null, out, err, dbg, log);
+			Pattern p = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+			Matcher m = p.matcher(out.toString());
+			if (m.find()) {
+				version = m.group(0);
+			}
+		} else if (name.equals("msvc")) {
+			NarUtil.runCommand("link", new String[] { "/?" }, null, null, out, err, dbg, log, true);
+			Pattern p = Pattern.compile("\\d+\\.\\d+\\.\\d+(\\.\\d+)?");
+			Matcher m = p.matcher(out.toString());
+			if (m.find()) {
+				version = m.group(0);
+			}
+		} else if (name.equals("icc") || name.equals("icpc")) {
+			NarUtil.runCommand("icc", new String[] { "--version" }, null, null, out, err, dbg, log);
+			Pattern p = Pattern.compile("\\d+\\.\\d+");
+			Matcher m = p.matcher(out.toString());
+			if (m.find()) {
+				version = m.group(0);
+			}
+		} else if (name.equals("icl")) {
+			NarUtil.runCommand("icl", new String[] { "/QV" }, null, null, out, err, dbg, log);
+			Pattern p = Pattern.compile("\\d+\\.\\d+");
+			Matcher m = p.matcher(err.toString());
+			if (m.find()) {
+				version = m.group(0);
+			}
+		} else if (name.equals("CC")) {
+			NarUtil.runCommand("CC", new String[] { "-V" }, null, null, out, err, dbg, log);
+			Pattern p = Pattern.compile("\\d+\\.d+");
+			Matcher m = p.matcher(err.toString());
+			if (m.find()) {
+				version = m.group(0);
+			}
+		} else {
+			throw new MojoFailureException("Cannot find version number for linker '" + name + "'");
+		}
 
-    protected final String getPrefix()
-            throws MojoFailureException, MojoExecutionException
-        {
-            return mojo.getAOL().getKey() + ".linker.";
-        }
+		if (version == null) {
+			throw new MojoFailureException("Cannot deduce version number from: " + out.toString());
+		}
+		return version;
+	}
 
-    /* (non-Javadoc)
+	protected final String getPrefix() throws MojoFailureException, MojoExecutionException {
+		return mojo.getAOL().getKey() + ".linker.";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#isIncremental()
 	 */
-    public boolean isIncremental() {
+	public boolean isIncremental() {
 		return incremental;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#isMap()
 	 */
 	public boolean isMap() {
 		return map;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#getOptions()
 	 */
 	public List getOptions() throws MojoFailureException, MojoExecutionException {
 		List optionList = new ArrayList();
-        if ( options != null )
-        {
-            optionList.addAll(options);
-        }
+		if (options != null) {
+			optionList.addAll(options);
+		}
 
-        if ( optionSet != null )
-        {
+		if (optionSet != null) {
 
-            String[] opts = optionSet.split( "\\s" );
+			String[] opts = optionSet.split("\\s");
 
-            for ( int i = 0; i < opts.length; i++ )
-            {
+			for (int i = 0; i < opts.length; i++) {
 
-                optionList.add( opts[i] );
-            }
-        }
+				optionList.add(opts[i]);
+			}
+		}
 
-        if ( !clearDefaultOptions )
-        {
-            String option = mojo.getNarProperties().getProperty( getPrefix() + "options" );
-            if ( option != null )
-            {
-                String[] opt = option.split( " " );
-                for ( int i = 0; i < opt.length; i++ )
-                {
-                    optionList.add( opt[i] );
-                }
-            }
-        }
-        return optionList;
+		if (!clearDefaultOptions) {
+			String option = mojo.getNarProperties().getProperty(getPrefix() + "options");
+			if (option != null) {
+				String[] opt = option.split(" ");
+				for (int i = 0; i < opt.length; i++) {
+					optionList.add(opt[i]);
+				}
+			}
+		}
+		return optionList;
 	}
-	
-    private List buildLibList( String libraryList )
-    {
-    	List libList = new ArrayList();
-        if ( libraryList == null )
-        {
-            return libList;
-        }
 
-        String[] lib = libraryList.split( "," );
+	private List buildLibList(String libraryList) {
+		List libList = new ArrayList();
+		if (libraryList == null) {
+			return libList;
+		}
 
-        for ( int i = 0; i < lib.length; i++ )
-        {
+		String[] lib = libraryList.split(",");
 
-            String[] libInfo = lib[i].trim().split( ":", 3 );
+		for (int i = 0; i < lib.length; i++) {
 
-            String[] libNames = new NarUtil.StringArrayBuilder( libInfo[0] ).getValue();
-            for ( int j = 0; j < libNames.length; ++j) {
-                Lib library = new Lib();
-                library.setName( libNames[j] );
-                library.setType(null);
-                if ( libInfo.length > 1 )
-                {
-                    library.setType( libInfo[1] );
-                    if ( libInfo.length > 2 )
-                    {
-                        library.setDirectory( new File( libInfo[2] ) );
-                    }
-                }
-                libList.add(library);
-            }
-        }
-        return libList;
-    }
+			String[] libInfo = lib[i].trim().split(":", 3);
 
-    private List buildSysLibList( String libraryList )
-    {
-    	List libList = new ArrayList();
-        if ( libraryList == null )
-        {
-            return libList;
-        }
+			String[] libNames = new NarUtil.StringArrayBuilder(libInfo[0]).getValue();
+			for (int j = 0; j < libNames.length; ++j) {
+				Lib library = new Lib();
+				library.setName(libNames[j]);
+				library.setType(null);
+				if (libInfo.length > 1) {
+					library.setType(libInfo[1]);
+					if (libInfo.length > 2) {
+						library.setDirectory(new File(libInfo[2]));
+					}
+				}
+				libList.add(library);
+			}
+		}
+		return libList;
+	}
 
-        String[] lib = libraryList.split( "," );
+	private List buildSysLibList(String libraryList) {
+		List libList = new ArrayList();
+		if (libraryList == null) {
+			return libList;
+		}
 
-        for ( int i = 0; i < lib.length; i++ )
-        {
+		String[] lib = libraryList.split(",");
 
-            String[] libInfo = lib[i].trim().split( ":", 3 );
+		for (int i = 0; i < lib.length; i++) {
 
-            String[] libNames = new NarUtil.StringArrayBuilder( libInfo[0] ).getValue();
-            for ( int j = 0; j < libNames.length; ++j) {
-                SysLib library = new SysLib();
-                library.setName( libNames[j] );
-                library.setType(null);
-                if ( libInfo.length > 1 )
-                {
-                    library.setType( libInfo[1] );
-                }
-                libList.add(library);
-            }
-        }
-        return libList;
-    }
-    
-    /* (non-Javadoc)
+			String[] libInfo = lib[i].trim().split(":", 3);
+
+			String[] libNames = new NarUtil.StringArrayBuilder(libInfo[0]).getValue();
+			for (int j = 0; j < libNames.length; ++j) {
+				SysLib library = new SysLib();
+				library.setName(libNames[j]);
+				library.setType(null);
+				if (libInfo.length > 1) {
+					library.setType(libInfo[1]);
+				}
+				libList.add(library);
+			}
+		}
+		return libList;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#getLibs()
 	 */
-    public List getLibs() throws MojoFailureException, MojoExecutionException {
-        List fullLibList = new ArrayList();
-        if ( ( libs != null ) || ( libSet != null ) )
-        {
+	public List getLibs() throws MojoFailureException, MojoExecutionException {
+		List fullLibList = new ArrayList();
+		if ((libs != null) || (libSet != null)) {
 
-            if ( libs != null )
-            {
-            	fullLibList.addAll(libs);
-            }
+			if (libs != null) {
+				fullLibList.addAll(libs);
+			}
 
-            if ( libSet != null )
-            {
-                fullLibList.addAll( buildLibList( libSet ) );
-            }
-        }
-        else
-        {
-            String libsList = mojo.getNarProperties().getProperty( getPrefix() + "libs" );
-            fullLibList.addAll( buildLibList( libsList ) );
-        }
-        return fullLibList;
-    }
-    
-    /* (non-Javadoc)
+			if (libSet != null) {
+				fullLibList.addAll(buildLibList(libSet));
+			}
+		} else {
+			String libsList = mojo.getNarProperties().getProperty(getPrefix() + "libs");
+			fullLibList.addAll(buildLibList(libsList));
+		}
+		return fullLibList;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILinker#getSysLibs()
 	 */
-    public List getSysLibs() throws MojoFailureException, MojoExecutionException {
-        List fullSysLibList = new ArrayList();
-        if ( ( sysLibs != null ) || ( sysLibSet != null ) )
-        {
+	public List getSysLibs() throws MojoFailureException, MojoExecutionException {
+		List fullSysLibList = new ArrayList();
+		if ((sysLibs != null) || (sysLibSet != null)) {
 
-            if ( sysLibs != null )
-            {
-            	fullSysLibList.addAll(sysLibs);
-            }
+			if (sysLibs != null) {
+				fullSysLibList.addAll(sysLibs);
+			}
 
-            if ( sysLibSet != null )
-            {
-                fullSysLibList.addAll( buildSysLibList( sysLibSet ) );
-            }
-        }
-        else
-        {
-            String sysLibsList = mojo.getNarProperties().getProperty( getPrefix() + "sysLibs" );
-            fullSysLibList.addAll( buildSysLibList( sysLibsList ) );
-        }
-        return fullSysLibList;
-    }
+			if (sysLibSet != null) {
+				fullSysLibList.addAll(buildSysLibList(sysLibSet));
+			}
+		} else {
+			String sysLibsList = mojo.getNarProperties().getProperty(getPrefix() + "sysLibs");
+			fullSysLibList.addAll(buildSysLibList(sysLibsList));
+		}
+		return fullSysLibList;
+	}
 }

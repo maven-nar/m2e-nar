@@ -19,14 +19,15 @@
  */
 package com.github.sdedwards.m2e_nar.internal.model;
 
-
 public class NarSysLib {
 
 	private String name;
-	
+
 	private String type;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarSysLibSettings#getName()
 	 */
 	public String getName() {
@@ -37,7 +38,9 @@ public class NarSysLib {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarSysLibSettings#getType()
 	 */
 	public String getType() {

@@ -19,14 +19,12 @@
  */
 package com.github.sdedwards.m2e_nar.internal.cdt;
 
-
-
 public class MacosxCppLinkerSynchroniser extends AbstractGnuLinkerSynchroniser {
-	
+
 	protected static final String cppLinkerId = "cdt.managedbuild.tool.macosx.cpp.linker";
 	protected static final String cppLdFlags = "macosx.cpp.link.option.flags";
 	protected static final String cppShared = "macosx.cpp.link.option.shared";
-	
+
 	public MacosxCppLinkerSynchroniser() {
 	}
 

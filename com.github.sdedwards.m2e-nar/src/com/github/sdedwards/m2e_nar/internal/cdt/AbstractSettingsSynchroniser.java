@@ -60,14 +60,14 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 
 	protected static final String cppLanguageId = "org.eclipse.cdt.core.g++";
 	protected static final String cLanguageId = "org.eclipse.cdt.core.gcc";
-	//protected String cppSourceContentType = "org.eclipse.cdt.core.cxxSource";
-	//protected String cSourceContentType = "org.eclipse.cdt.core.cSource";
-	
+	// protected String cppSourceContentType = "org.eclipse.cdt.core.cxxSource";
+	// protected String cSourceContentType = "org.eclipse.cdt.core.cSource";
+
 	private final List<SettingsSynchroniser> toolSpecifics = new ArrayList<SettingsSynchroniser>();
 
 	public AbstractSettingsSynchroniser() {
 	}
-	
+
 	protected void addToolSpecificSynchroniser(SettingsSynchroniser toolSpecificSynchroniser) {
 		toolSpecifics.add(toolSpecificSynchroniser);
 	}
@@ -85,12 +85,11 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 			toolSpecificSynchroniser.fullSync(cfg, artifactSettings);
 		}
 	}
-	
-	private void setArtifactName(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) {
+
+	private void setArtifactName(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) {
 		final String artifactName = artifactSettings.getArtifactName();
 		if (artifactName != null) {
-			BuildConfigurationData confData = (BuildConfigurationData)cfg.getConfigurationData();
+			BuildConfigurationData confData = (BuildConfigurationData) cfg.getConfigurationData();
 			IConfiguration managedConf = confData.getConfiguration();
 			managedConf.setArtifactName(artifactName);
 		}
@@ -101,16 +100,16 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 		logger.info("Paths sync to configuration " + cfg.getName());
 		setProjectRefs(cfg, artifactSettings);
 		setIncludes(cfg, artifactSettings);
-		setLibraryPaths(cfg, artifactSettings);		
+		setLibraryPaths(cfg, artifactSettings);
 		setLibraries(cfg, artifactSettings);
 		// Tool-specific settings
 		for (SettingsSynchroniser toolSpecificSynchroniser : toolSpecifics) {
 			toolSpecificSynchroniser.pathsOnlySync(cfg, artifactSettings);
 		}
 	}
-	
+
 	public abstract String getToolchain();
-	
+
 	private void setProjectRefs(final ICConfigurationDescription conf, final NarBuildArtifact settings) throws CoreException {
 		Map<String, String> refs = new HashMap<String, String>();
 		for (String projectName : settings.getProjectReferences()) {
@@ -160,39 +159,37 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 			l.addAll(commonIncludePathEntries);
 			if (cppLanguageId.equals(setting.getLanguageId())) {
 				l.addAll(cppIncludePathEntries);
-			}
-			else if (cLanguageId.equals(setting.getLanguageId())) {
+			} else if (cLanguageId.equals(setting.getLanguageId())) {
 				l.addAll(cIncludePathEntries);
 			}
 			setting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, l);
 		}
 	}
-	
+
 	private void setDefinedSymbols(final ICConfigurationDescription conf, final NarBuildArtifact settings) throws CoreException {
 		final ICLanguageSetting[] languageSettings = conf.getRootFolderDescription().getLanguageSettings();
 
 		final List<ICMacroEntry> cMacroEntries = new ArrayList<ICMacroEntry>();
 		for (final String define : settings.getCSettings().getDefines()) {
 			ICMacroEntry macroEntry = createMacroEntry(define, 0);
-			cMacroEntries.add(macroEntry);			
+			cMacroEntries.add(macroEntry);
 		}
 		final List<ICMacroEntry> cppMacroEntries = new ArrayList<ICMacroEntry>();
 		for (final String define : settings.getCppSettings().getDefines()) {
 			ICMacroEntry macroEntry = createMacroEntry(define, 0);
-			cppMacroEntries.add(macroEntry);			
+			cppMacroEntries.add(macroEntry);
 		}
 		for (ICLanguageSetting setting : languageSettings) {
 			final List<ICLanguageSettingEntry> l = setting.getSettingEntriesList(ICSettingEntry.MACRO);
 			l.clear();
 			if (cppLanguageId.equals(setting.getLanguageId())) {
 				l.addAll(cppMacroEntries);
-			}
-			else if (cLanguageId.equals(setting.getLanguageId())) {
+			} else if (cLanguageId.equals(setting.getLanguageId())) {
 				l.addAll(cMacroEntries);
 			}
 			setting.setSettingEntries(ICSettingEntry.MACRO, l);
 		}
-		
+
 	}
 
 	private void setSourceDirs(final ICConfigurationDescription conf, final NarBuildArtifact settings) throws CoreException {
@@ -211,10 +208,10 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 		}
 		conf.setSourceEntries(sourceEntries);
 	}
-	
+
 	private void setLibraryPaths(final ICConfigurationDescription conf, final NarBuildArtifact settings) throws CoreException {
 		final ICLanguageSetting[] languageSettings = conf.getRootFolderDescription().getLanguageSettings();
-		
+
 		final List<ICLibraryPathEntry> libraryPathEntries = new ArrayList<ICLibraryPathEntry>();
 		for (final NarLib lib : settings.getDependencyLibs()) {
 			ICLibraryPathEntry libraryPath = createLibraryPathEntry(lib.getDirectory().getPath(), 0);
@@ -229,12 +226,12 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 			l.clear();
 			l.addAll(libraryPathEntries);
 			setting.setSettingEntries(ICSettingEntry.LIBRARY_PATH, l);
-		}		
+		}
 	}
-	
+
 	private void setLibraries(final ICConfigurationDescription conf, final NarBuildArtifact settings) throws CoreException {
 		final ICLanguageSetting[] languageSettings = conf.getRootFolderDescription().getLanguageSettings();
-		
+
 		final List<ICLibraryFileEntry> libraryEntries = new ArrayList<ICLibraryFileEntry>();
 		for (final NarLib lib : settings.getDependencyLibs()) {
 			final ICLibraryFileEntry library = CDataUtil.createCLibraryFileEntry(lib.getName(), 0);
@@ -253,42 +250,39 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 			libraryEntries.add(library);
 		}
 		/*
-		for (String path : settings.getLibraries()) {
-			ICLibraryFileEntry library = CDataUtil.createCLibraryFileEntry(lib, 0);
-			libraryPathEntries.add(library);
-		}
-		*/
+		 * for (String path : settings.getLibraries()) { ICLibraryFileEntry
+		 * library = CDataUtil.createCLibraryFileEntry(lib, 0);
+		 * libraryPathEntries.add(library); }
+		 */
 		for (final ICLanguageSetting setting : languageSettings) {
 			final List<ICLanguageSettingEntry> l = setting.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
 			l.clear();
 			l.addAll(libraryEntries);
 			setting.setSettingEntries(ICSettingEntry.LIBRARY_FILE, l);
-		}		
+		}
 	}
-	
+
 	private ICIncludePathEntry createIncludePathEntry(final String path, final int flags) {
 		final IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 		final File file = new File(path);
 		logger.debug("Include path " + path);
 		if (!file.isAbsolute()) {
 			return CDataUtil.createCIncludePathEntry(path, ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
-		}
-		else {
+		} else {
 			IContainer container = workspace.getContainerForLocation(Path.fromOSString(path));
 			if (container == null) {
 				return CDataUtil.createCIncludePathEntry(path, flags);
-			}
-			else {
+			} else {
 				return CDataUtil.createCIncludePathEntry(container.getFullPath().toOSString(), ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
-			}			
+			}
 		}
 	}
-	
+
 	private ICMacroEntry createMacroEntry(final String define, final int flags) {
 		final String[] split = define.split("=", 2);
 		return CDataUtil.createCMacroEntry(split[0], (split.length > 1 ? split[1] : null), flags);
 	}
-	
+
 	private ICSourceEntry createSourcePathEntry(final String path, final Set<String> excludes, final int flags) {
 		IPath[] exclusionPatterns = null;
 		if (excludes.size() > 0) {
@@ -303,15 +297,15 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 		final IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 		final File file = new File(path);
 		if (!file.isAbsolute()) {
-			return (ICSourceEntry)CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, path, null, exclusionPatterns, ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
-		}
-		else {
+			return (ICSourceEntry) CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, path, null, exclusionPatterns, ICSettingEntry.VALUE_WORKSPACE_PATH
+					| flags);
+		} else {
 			IContainer container = workspace.getContainerForLocation(Path.fromOSString(path));
 			if (container == null) {
-				return (ICSourceEntry)CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, path, null, exclusionPatterns, flags);
-			}
-			else {
-				return (ICSourceEntry)CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, container.getFullPath().toOSString(), null, exclusionPatterns, ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
+				return (ICSourceEntry) CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, path, null, exclusionPatterns, flags);
+			} else {
+				return (ICSourceEntry) CDataUtil.createEntry(ICLanguageSettingEntry.SOURCE_PATH, container.getFullPath().toOSString(), null, exclusionPatterns,
+						ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
 			}
 		}
 	}
@@ -321,15 +315,13 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 		final File file = new File(path);
 		if (!file.isAbsolute()) {
 			return CDataUtil.createCLibraryPathEntry(path, ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
-		}
-		else {
+		} else {
 			IContainer container = workspace.getContainerForLocation(Path.fromOSString(path));
 			if (container == null) {
 				return CDataUtil.createCLibraryPathEntry(path, flags);
-			}
-			else {
+			} else {
 				return CDataUtil.createCLibraryPathEntry(container.getFullPath().toOSString(), ICSettingEntry.VALUE_WORKSPACE_PATH | flags);
-			}			
+			}
 		}
 	}
 

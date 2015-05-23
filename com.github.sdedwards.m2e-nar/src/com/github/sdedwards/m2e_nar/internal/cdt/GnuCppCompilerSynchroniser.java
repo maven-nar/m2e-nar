@@ -23,7 +23,7 @@ import com.github.sdedwards.m2e_nar.internal.model.NarBuildArtifact;
 import com.github.sdedwards.m2e_nar.internal.model.NarCompiler;
 
 public class GnuCppCompilerSynchroniser extends AbstractGnuCompilerSynchroniser {
-	
+
 	protected static final String cppCompilerId = "cdt.managedbuild.tool.gnu.cpp.compiler";
 	protected static final String cppUndefId = "gnu.cpp.compiler.option.preprocessor.undef";
 	protected static final String cppOptLevel = "gnu.cpp.compiler.option.optimization.level";
@@ -32,37 +32,32 @@ public class GnuCppCompilerSynchroniser extends AbstractGnuCompilerSynchroniser 
 	protected static final String cppfPIC = "gnu.cpp.compiler.option.other.pic";
 
 	private static final String noRtti = "-fno-rtti";
-	
+
 	protected enum CppOptimizationLevel {
-		NONE("gnu.cpp.compiler.optimization.level.none"),
-		OPTIMIZE("gnu.cpp.compiler.optimization.level.optimize"),
-		MORE("gnu.cpp.compiler.optimization.level.more"),
-		MOST("gnu.cpp.compiler.optimization.level.most"),
-		SIZE("gnu.cpp.compiler.optimization.level.size");
-		
+		NONE("gnu.cpp.compiler.optimization.level.none"), OPTIMIZE("gnu.cpp.compiler.optimization.level.optimize"), MORE(
+				"gnu.cpp.compiler.optimization.level.more"), MOST("gnu.cpp.compiler.optimization.level.most"), SIZE("gnu.cpp.compiler.optimization.level.size");
+
 		final String level;
-		
+
 		private CppOptimizationLevel(final String level) {
 			this.level = level;
 		}
-		
+
 		public String toString() {
 			return level;
 		}
 	}
 
 	protected enum CppDebugLevel {
-		NONE("gnu.cpp.compiler.debugging.level.none"),
-		MINIMAL("gnu.cpp.compiler.debugging.level.minimal"),
-		DEFAULT("gnu.cpp.compiler.debugging.level.default"),
-		MAX("gnu.cpp.compiler.debugging.level.max");
-		
+		NONE("gnu.cpp.compiler.debugging.level.none"), MINIMAL("gnu.cpp.compiler.debugging.level.minimal"), DEFAULT("gnu.cpp.compiler.debugging.level.default"), MAX(
+				"gnu.cpp.compiler.debugging.level.max");
+
 		final String level;
-		
+
 		private CppDebugLevel(final String level) {
 			this.level = level;
 		}
-		
+
 		public String toString() {
 			return level;
 		}
@@ -139,7 +134,7 @@ public class GnuCppCompilerSynchroniser extends AbstractGnuCompilerSynchroniser 
 	public String getFPICOptionId() {
 		return cppfPIC;
 	}
-	
+
 	@Override
 	public String getFlags(final NarCompiler compilerSettings) {
 		final String flags = super.getFlags(compilerSettings);

@@ -24,16 +24,12 @@ package com.github.maven_nar;
  * 
  * @author Mark Donszelmann
  */
-public class C
-    extends Compiler
-{
+public class C extends Compiler {
 
-    public C()
-    {
-    }
+	public C() {
+	}
 
-    public final String getLanguage()
-    {
-        return "c";
-    }
+	public final String getLanguage() {
+		return "c";
+	}
 }

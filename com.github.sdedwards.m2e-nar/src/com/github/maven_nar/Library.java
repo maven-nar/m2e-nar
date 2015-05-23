@@ -30,143 +30,136 @@ import java.util.List;
  * 
  * @author Mark Donszelmann
  */
-public class Library
-    implements Executable, ILibrary
-{
+public class Library implements Executable, ILibrary {
 
-    /**
-     * Type of the library to generate. Possible choices are: "plugin", "shared", "static", "jni" or "executable".
-     * Defaults to "shared".
-     * 
-     * @parameter default-value=""
-     */
-    private String type = SHARED;
-    
-    /**
-     * Type of subsystem to generate: "gui", "console", "other". Defaults to "console".
-     *
-     * @parameter default-value=""
-     */
-    private String subSystem = "console";
-    
-    /**
-     * Link with stdcpp if necessary Defaults to true.
-     * 
-     * @parameter default-value=""
-     */
-    private boolean linkCPP = true;
+	/**
+	 * Type of the library to generate. Possible choices are: "plugin",
+	 * "shared", "static", "jni" or "executable". Defaults to "shared".
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String type = SHARED;
 
-    /**
-     * Link with fortran runtime if necessary Defaults to false.
-     * 
-     * @parameter default-value=""
-     */
-    private boolean linkFortran = false;
+	/**
+	 * Type of subsystem to generate: "gui", "console", "other". Defaults to
+	 * "console".
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String subSystem = "console";
 
-    /**
-     * Link with fortran startup, so that the gcc linker can find the "main" of fortran. Defaults to false.
-     * 
-     * @parameter default-value=""
-     */
-    private boolean linkFortranMain = false;
+	/**
+	 * Link with stdcpp if necessary Defaults to true.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private boolean linkCPP = true;
 
-    /**
-     * If specified will create the NarSystem class with methods to load a JNI library.
-     * 
-     * @parameter default-value=""
-     */
-    private String narSystemPackage = null;
+	/**
+	 * Link with fortran runtime if necessary Defaults to false.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private boolean linkFortran = false;
 
-    /**
-     * Name of the NarSystem class
-     * 
-     * @parameter default-value="NarSystem"
-     * @required
-     */
-    private String narSystemName = "NarSystem";
+	/**
+	 * Link with fortran startup, so that the gcc linker can find the "main" of
+	 * fortran. Defaults to false.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private boolean linkFortranMain = false;
 
-    /**
-     * The target directory into which to generate the output.
-     * 
-     * @parameter default-value="${project.build.dir}/nar/nar-generated"
-     * @required
-     */
-    private String narSystemDirectory = "nar-generated";
+	/**
+	 * If specified will create the NarSystem class with methods to load a JNI
+	 * library.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String narSystemPackage = null;
 
-    /**
-     * When true and if type is "executable" run this executable. Defaults to false;
-     * 
-     * @parameter default-value=""
-     */
-    private boolean run = false;
+	/**
+	 * Name of the NarSystem class
+	 * 
+	 * @parameter default-value="NarSystem"
+	 * @required
+	 */
+	private String narSystemName = "NarSystem";
 
-    /**
-     * Arguments to be used for running this executable. Defaults to empty list. This option is only used if run=true
-     * and type=executable.
-     * 
-     * @parameter default-value=""
-     */
-    private List/* <String> */args = new ArrayList();
+	/**
+	 * The target directory into which to generate the output.
+	 * 
+	 * @parameter default-value="${project.build.dir}/nar/nar-generated"
+	 * @required
+	 */
+	private String narSystemDirectory = "nar-generated";
 
-    /* (non-Javadoc)
+	/**
+	 * When true and if type is "executable" run this executable. Defaults to
+	 * false;
+	 * 
+	 * @parameter default-value=""
+	 */
+	private boolean run = false;
+
+	/**
+	 * Arguments to be used for running this executable. Defaults to empty list.
+	 * This option is only used if run=true and type=executable.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private List/* <String> */args = new ArrayList();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ILibrary#getType()
 	 */
-    public final String getType()
-    {
-        return type;
-    }
+	public final String getType() {
+		return type;
+	}
 
-    public final boolean linkCPP()
-    {
-        return linkCPP;
-    }
+	public final boolean linkCPP() {
+		return linkCPP;
+	}
 
-    public final boolean linkFortran()
-    {
-        return linkFortran;
-    }
+	public final boolean linkFortran() {
+		return linkFortran;
+	}
 
-    public final boolean linkFortranMain()
-    {
-        return linkFortranMain;
-    }
+	public final boolean linkFortranMain() {
+		return linkFortranMain;
+	}
 
-    public final String getNarSystemPackage()
-    {
-        return narSystemPackage;
-    }
+	public final String getNarSystemPackage() {
+		return narSystemPackage;
+	}
 
-    public final boolean shouldRun()
-    {
-        return run;
-    }
+	public final boolean shouldRun() {
+		return run;
+	}
 
-    public final List/* <String> */getArgs()
-    {
-        return args;
-    }
+	public final List/* <String> */getArgs() {
+		return args;
+	}
 
-    public final String getNarSystemName()
-    {
-        return narSystemName;
-    }
+	public final String getNarSystemName() {
+		return narSystemName;
+	}
 
-    public final String getNarSystemDirectory()
-    {
-        return narSystemDirectory;
-    }
+	public final String getNarSystemDirectory() {
+		return narSystemDirectory;
+	}
 
-    // FIXME incomplete
-    public final String toString()
-    {
-        StringBuffer sb = new StringBuffer( "Library: " );
-        sb.append( "type: " );
-        sb.append( getType() );
-        return sb.toString();
-    }
+	// FIXME incomplete
+	public final String toString() {
+		StringBuffer sb = new StringBuffer("Library: ");
+		sb.append("type: ");
+		sb.append(getType());
+		return sb.toString();
+	}
 
-    public String getSubSystem()
-    {
-        return subSystem;
-    }
+	public String getSubSystem() {
+		return subSystem;
+	}
 }

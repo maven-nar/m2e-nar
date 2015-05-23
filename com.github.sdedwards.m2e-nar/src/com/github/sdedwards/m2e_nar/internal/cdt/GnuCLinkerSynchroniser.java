@@ -19,14 +19,12 @@
  */
 package com.github.sdedwards.m2e_nar.internal.cdt;
 
-
-
 public class GnuCLinkerSynchroniser extends AbstractGnuLinkerSynchroniser {
-	
+
 	protected static final String cLinkerId = "cdt.managedbuild.tool.gnu.c.linker";
 	protected static final String cLdFlags = "gnu.c.link.option.flags";
 	protected static final String cShared = "gnu.c.link.option.shared";
-	
+
 	public GnuCLinkerSynchroniser() {
 	}
 

@@ -26,10 +26,8 @@ import com.github.sdedwards.m2e_nar.internal.model.NarBuildArtifact;
 
 public interface SettingsSynchroniser {
 
-	public void fullSync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException;
+	public void fullSync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException;
 
-	public void pathsOnlySync(ICConfigurationDescription cfg,
-			NarBuildArtifact artifactSettings) throws CoreException;
+	public void pathsOnlySync(ICConfigurationDescription cfg, NarBuildArtifact artifactSettings) throws CoreException;
 
 }

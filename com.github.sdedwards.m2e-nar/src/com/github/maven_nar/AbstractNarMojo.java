@@ -100,9 +100,9 @@ public abstract class AbstractNarMojo
     private File outputDirectory;
 
     /**
-     * @parameter property="project.build.outputDirectory"
-     * @readonly
-     */
+	 * @parameter property="project.build.outputDirectory"
+	 * @readonly
+	 */
     protected File classesDirectory;
 
     /**

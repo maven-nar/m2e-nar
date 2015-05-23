@@ -29,66 +29,44 @@ import org.apache.maven.plugin.logging.Log;
  * @author Mark Donszelmann (Mark.Donszelmann@gmail.com)
  * @version $Id$
  */
-public abstract class AbstractNarLayout
-    implements NarLayout, NarConstants
-{
-    private Log log;
+public abstract class AbstractNarLayout implements NarLayout, NarConstants {
+	private Log log;
 
-    protected AbstractNarLayout( Log log )
-    {
-        this.log = log;
-    }
+	protected AbstractNarLayout(Log log) {
+		this.log = log;
+	}
 
-    protected Log getLog()
-    {
-        return log;
-    }
+	protected Log getLog() {
+		return log;
+	}
 
-    /**
-     * @return
-     * @throws MojoExecutionException
-     */
-    public static NarLayout getLayout( String layoutName, Log log )
-        throws MojoExecutionException
-    {
-        String className =
-            layoutName.indexOf( '.' ) < 0 ? NarLayout21.class.getPackage().getName() + "." + layoutName : layoutName;
-        log.debug( "Using " + className );
-        Class cls;
-        try
-        {
-            cls = Class.forName( className );
-            Constructor ctor = cls.getConstructor( new Class[] { Log.class } );
-            return (NarLayout) ctor.newInstance( new Object[] { log } );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new MojoExecutionException( "Cannot find class for layout " + className, e );
-        }
-        catch ( InstantiationException e )
-        {
-            throw new MojoExecutionException( "Cannot instantiate class for layout " + className, e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new MojoExecutionException( "Cannot access class for layout " + className, e );
-        }
-        catch ( SecurityException e )
-        {
-            throw new MojoExecutionException( "Cannot access class for layout " + className, e );
-        }
-        catch ( NoSuchMethodException e )
-        {
-            throw new MojoExecutionException( "Cannot find ctor(Log) for layout " + className, e );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw new MojoExecutionException( "Wrong arguments ctor(Log) for layout " + className, e );
-        }
-        catch ( InvocationTargetException e )
-        {
-            throw new MojoExecutionException( "Cannot invokector(Log) for layout " + className, e );
-        }
-    }
+	/**
+	 * @return
+	 * @throws MojoExecutionException
+	 */
+	public static NarLayout getLayout(String layoutName, Log log) throws MojoExecutionException {
+		String className = layoutName.indexOf('.') < 0 ? NarLayout21.class.getPackage().getName() + "." + layoutName : layoutName;
+		log.debug("Using " + className);
+		Class cls;
+		try {
+			cls = Class.forName(className);
+			Constructor ctor = cls.getConstructor(new Class[] { Log.class });
+			return (NarLayout) ctor.newInstance(new Object[] { log });
+		} catch (ClassNotFoundException e) {
+			throw new MojoExecutionException("Cannot find class for layout " + className, e);
+		} catch (InstantiationException e) {
+			throw new MojoExecutionException("Cannot instantiate class for layout " + className, e);
+		} catch (IllegalAccessException e) {
+			throw new MojoExecutionException("Cannot access class for layout " + className, e);
+		} catch (SecurityException e) {
+			throw new MojoExecutionException("Cannot access class for layout " + className, e);
+		} catch (NoSuchMethodException e) {
+			throw new MojoExecutionException("Cannot find ctor(Log) for layout " + className, e);
+		} catch (IllegalArgumentException e) {
+			throw new MojoExecutionException("Wrong arguments ctor(Log) for layout " + className, e);
+		} catch (InvocationTargetException e) {
+			throw new MojoExecutionException("Cannot invokector(Log) for layout " + className, e);
+		}
+	}
 
 }

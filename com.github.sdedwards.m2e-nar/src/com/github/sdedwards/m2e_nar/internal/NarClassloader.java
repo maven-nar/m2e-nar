@@ -36,12 +36,12 @@ import org.eclipse.core.runtime.Status;
 import com.github.sdedwards.m2e_nar.MavenNarPlugin;
 
 public class NarClassloader extends ClassLoader {
-	
+
 	private final String mavenPackage = "org.eclipse.m2e.cdt.internal.nar.maven";
 	private final String builder = "org.eclipse.m2e.cdt.internal.nar.maven.NarExecutionBuilder";
-	
+
 	private ClassRealm mavenClassloader;
-	
+
 	public NarClassloader(ClassRealm mavenClassloader) {
 		this.mavenClassloader = mavenClassloader;
 	}
@@ -51,12 +51,8 @@ public class NarClassloader extends ClassLoader {
 			Class<?> clazz = Class.forName(builder, true, this);
 			Constructor<?> constructor = clazz.getConstructor(MavenProject.class, AbstractMojo.class);
 			return (INarExecutionBuilder) constructor.newInstance(mavenProject, mojo);
-		}
-		catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"NAR Classloader problem",
-					e));
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "NAR Classloader problem", e));
 		}
 	}
 
@@ -66,10 +62,9 @@ public class NarClassloader extends ClassLoader {
 			// Try the parent classloader by default
 			try {
 				return NarClassloader.class.getClassLoader().loadClass(name);
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				// Now try the Maven plugin realm classloader
-				return mavenClassloader.loadClass(name);				
+				return mavenClassloader.loadClass(name);
 			}
 		}
 		// Find the class file in the bundle
@@ -93,8 +88,7 @@ public class NarClassloader extends ClassLoader {
 			}
 			byte[] buf = out.toByteArray();
 			return defineClass(name, buf, 0, buf.length);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new ClassNotFoundException(name + " cannot be loaded", e);
 		}
 	}

@@ -27,14 +27,13 @@ import org.slf4j.LoggerFactory;
 public class NarTestCompileBuildParticipant extends NarBuildParticipant {
 
 	private static final Logger logger = LoggerFactory.getLogger(CProjectConfigurator.class);
-	
+
 	public NarTestCompileBuildParticipant(MojoExecution execution, boolean runOnIncremental, boolean runOnConfiguration) {
-		super(new MojoExecution(execution.getMojoDescriptor(), execution.getExecutionId(), execution.getSource())
-				, runOnIncremental, runOnConfiguration);
+		super(new MojoExecution(execution.getMojoDescriptor(), execution.getExecutionId(), execution.getSource()), runOnIncremental, runOnConfiguration);
 		// Some versions of nar-maven-plugin don't have a nar-test-unpack goal
 		// this means the test artifacts won't be available to us.
-		// What we need to do is run the nar-testCompile goal without any tests its configuration
-		// in order to just unpack.
+		// What we need to do is run the nar-testCompile goal without any tests
+		// its configuration in order to just unpack.
 		Xpp3Dom configuration = new Xpp3Dom(execution.getConfiguration());
 		logger.info("Configuration before: " + configuration);
 		for (int i = 0; i < configuration.getChildCount(); ++i) {

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NarBuildArtifact {
-	
+
 	public static final String STATIC = "static";
 	public static final String SHARED = "shared";
 	public static final String EXECUTABLE = "executable";
@@ -34,21 +34,21 @@ public class NarBuildArtifact {
 
 	private String configName;
 	private String artifactName;
-    private String type;
+	private String type;
 	private NarCompiler cppSettings;
 	private NarCompiler cSettings;
 	private NarLinker linkerSettings;
-	
+
 	private List<String> projectReferences = new ArrayList<String>();
-	
+
 	private List<String> javahIncludePaths = new ArrayList<String>();
 	private List<String> javaIncludePaths = new ArrayList<String>();
 	private List<File> dependencyIncludePaths = new ArrayList<File>();
-	
+
 	private List<NarLib> dependencyLibs = new ArrayList<NarLib>();
 	private List<NarSysLib> dependencySysLibs = new ArrayList<NarSysLib>();
 	private List<String> dependencyOptions = new ArrayList<String>();
-	
+
 	public String getConfigName() {
 		return configName;
 	}
@@ -57,75 +57,103 @@ public class NarBuildArtifact {
 		return artifactName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getType()
 	 */
 	public String getType() {
 		return type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getCppSettings()
 	 */
 	public NarCompiler getCppSettings() {
 		return cppSettings;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getcSettings()
 	 */
 	public NarCompiler getCSettings() {
 		return cSettings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getLinkerSettings()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getLinkerSettings()
 	 */
 	public NarLinker getLinkerSettings() {
 		return linkerSettings;
 	}
-	
+
 	public List<String> getProjectReferences() {
 		return projectReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyIncludePaths()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyIncludePaths
+	 * ()
 	 */
 	public List<File> getDependencyIncludePaths() {
 		return dependencyIncludePaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getJavahIncludePaths()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getJavahIncludePaths()
 	 */
 	public List<String> getJavahIncludePaths() {
 		return javahIncludePaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getJavaIncludePaths()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getJavaIncludePaths()
 	 */
 	public List<String> getJavaIncludePaths() {
 		return javaIncludePaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyLibs()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyLibs()
 	 */
 	public List<NarLib> getDependencyLibs() {
 		return dependencyLibs;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencySysLibs()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencySysLibs()
 	 */
 	public List<NarSysLib> getDependencySysLibs() {
 		return dependencySysLibs;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyOptions()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.m2e.cdt.internal.INarArtifactSettings#getDependencyOptions()
 	 */
 	public List<String> getDependencyOptions() {
 		return dependencyOptions;
@@ -154,7 +182,7 @@ public class NarBuildArtifact {
 	public void setLinkerSettings(NarLinker linkerSettings) {
 		this.linkerSettings = linkerSettings;
 	}
-	
+
 	public static boolean isSharedLibrary(final String type) {
 		return SHARED.equals(type) || JNI.equals(type) || PLUGIN.equals(type);
 	}

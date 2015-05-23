@@ -50,14 +50,14 @@ public class NarCompileMojo extends AbstractCompileMojo
      */
     protected MavenSession session;
 
-    protected List<Artifact> getArtifacts() {
-        final Set<Artifact> artifacts = getMavenProject().getArtifacts();
-        List<Artifact> returnArtifact = new ArrayList<Artifact>();
-        for(Artifact a : artifacts) {
-        	if (Artifact.SCOPE_COMPILE.equals(a.getScope()) || Artifact.SCOPE_PROVIDED.equals(a.getScope()) || Artifact.SCOPE_SYSTEM.equals(a.getScope())) {
-        		returnArtifact.add(a);
-        	}
-        }
-        return returnArtifact;
-    }    
+	protected List<Artifact> getArtifacts() {
+		final Set<Artifact> artifacts = getMavenProject().getArtifacts();
+		List<Artifact> returnArtifact = new ArrayList<Artifact>();
+		for (Artifact a : artifacts) {
+			if (Artifact.SCOPE_COMPILE.equals(a.getScope()) || Artifact.SCOPE_PROVIDED.equals(a.getScope()) || Artifact.SCOPE_SYSTEM.equals(a.getScope())) {
+				returnArtifact.add(a);
+			}
+		}
+		return returnArtifact;
+	}
 }

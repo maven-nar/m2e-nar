@@ -29,7 +29,7 @@ public interface ILibrary {
 	public static final String NONE = "none"; // no library produced
 
 	public abstract String getType();
-	
+
 	public abstract boolean linkCPP();
 
 }

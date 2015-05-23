@@ -55,15 +55,15 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(NarExecutionBuilder.class);
 	private final INarCompileMojo narCompileMojo;
 	private final MojoExecution mojoExecution;
-	
+
 	public NarExecutionBuilder(final AbstractMojo compileMojo, final MojoExecution mojoExceution) {
 		this.narCompileMojo = (INarCompileMojo) compileMojo;
 		this.mojoExecution = mojoExceution;
 	}
-	
+
 	public NarExecution build(final String buildType) throws CoreException {
 		try {
-			NarExecution settings = new NarExecution(mojoExecution);		
+			NarExecution settings = new NarExecution(mojoExecution);
 			settings.setSkip(narCompileMojo.isSkip());
 			settings.setOS(narCompileMojo.getOS());
 			settings.setLinkerName(narCompileMojo.getLinker().getName());
@@ -74,57 +74,47 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 					ILibrary library = (ILibrary) iter.next();
 					NarBuildArtifact buildArtifact = buildArtifactSettings(library.getType(), buildType, library.linkCPP(), null);
 					buildArtifact.setArtifactName(narCompileMojo.getOutput(library.getType()));
-					buildArtifact.setConfigName(CdtUtils.getConfigName(
-							mojoExecution, buildArtifact));
+					buildArtifact.setConfigName(CdtUtils.getConfigName(mojoExecution, buildArtifact));
 					artifactSettings.add(buildArtifact);
 				}
-			}
-			else if (NarExecution.TEST.equals(buildType)) {
+			} else if (NarExecution.TEST.equals(buildType)) {
 				List<?> tests = narCompileMojo.getTests();
 				for (Iterator<?> iter = tests.iterator(); iter.hasNext();) {
 					ITest test = (ITest) iter.next();
 					NarBuildArtifact buildArtifact = buildArtifactSettings(NarBuildArtifact.EXECUTABLE, buildType, true, test);
 					buildArtifact.setArtifactName(test.getName());
-					buildArtifact.setConfigName(CdtUtils.getTestConfigName(
-							mojoExecution, buildArtifact));
+					buildArtifact.setConfigName(CdtUtils.getTestConfigName(mojoExecution, buildArtifact));
 					artifactSettings.add(buildArtifact);
 				}
 			}
 			return settings;
-		}
-		catch (MojoFailureException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Mojo failure",
-					e));			
-		}
-		catch (MojoExecutionException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					MavenNarPlugin.PLUGIN_ID,
-					"Mojo execution failed",
-					e));
+		} catch (MojoFailureException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Mojo failure", e));
+		} catch (MojoExecutionException e) {
+			throw new CoreException(new Status(IStatus.ERROR, MavenNarPlugin.PLUGIN_ID, "Mojo execution failed", e));
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private NarBuildArtifact buildArtifactSettings(final String type, final String buildType, final boolean linkCPP, final ITest test) throws MojoExecutionException, MojoFailureException {
+	private NarBuildArtifact buildArtifactSettings(final String type, final String buildType, final boolean linkCPP, final ITest test)
+			throws MojoExecutionException, MojoFailureException {
 		NarBuildArtifact settings = new NarBuildArtifact();
-		
+
 		settings.setType(type);
-		
+
 		List<String> projectRefs = settings.getProjectReferences();
 		List<com.github.maven_nar.NarArtifact> narArtifacts = narCompileMojo.getNarArtifacts();
 		for (com.github.maven_nar.NarArtifact artifact : narArtifacts) {
 			if (artifact.getNarLayout() instanceof EclipseNarLayout) {
-				EclipseNarLayout layout = (EclipseNarLayout)artifact.getNarLayout();
+				EclipseNarLayout layout = (EclipseNarLayout) artifact.getNarLayout();
 				projectRefs.add(layout.getProject().getProject().getName());
 			}
 		}
-		
+
 		settings.setLinkerSettings(buildLinkerSettings(narCompileMojo.getLinker(), linkCPP));
 		settings.setCppSettings(buildCompilerSettings(narCompileMojo.getCpp(), buildType, test));
 		settings.setCSettings(buildCompilerSettings(narCompileMojo.getC(), buildType, test));
-		
+
 		List<String> javahIncludePaths = settings.getJavahIncludePaths();
 		javahIncludePaths.addAll(narCompileMojo.getJavahIncludePaths());
 		List<String> javaIncludePaths = settings.getJavaIncludePaths();
@@ -134,16 +124,16 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		dependencyIncludePaths.addAll(narCompileMojo.getDependencyIncludePaths());
 		List<NarLib> dependencyLibs = settings.getDependencyLibs();
 		logger.debug("library size " + narCompileMojo.getDependencyLibs(type, test).size());
-		for (Iterator<?> it = narCompileMojo.getDependencyLibs(type, test).iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = narCompileMojo.getDependencyLibs(type, test).iterator(); it.hasNext();) {
 			dependencyLibs.add(buildLibSettings((ILib) it.next()));
 		}
 		List<NarSysLib> dependencySysLibs = settings.getDependencySysLibs();
-		for (Iterator<?> it = narCompileMojo.getDependencySysLibs(type).iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = narCompileMojo.getDependencySysLibs(type).iterator(); it.hasNext();) {
 			dependencySysLibs.add(buildSysLibSettings((ISysLib) it.next()));
 		}
 		List<String> dependencyOptions = settings.getDependencyOptions();
 		dependencyOptions.addAll(narCompileMojo.getDependencyOptions(type));
-		
+
 		return settings;
 	}
 
@@ -152,13 +142,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		NarLinker settings = new NarLinker();
 		settings.setName(linker.getName());
 		List<NarLib> libs = settings.getLibs();
-		for (Iterator<?> it = linker.getLibs().iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = linker.getLibs().iterator(); it.hasNext();) {
 			libs.add(buildLibSettings((ILib) it.next()));
 		}
 		List<NarSysLib> sysLibs = settings.getSysLibs();
-		for (Iterator<?> it = linker.getSysLibs().iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = linker.getSysLibs().iterator(); it.hasNext();) {
 			sysLibs.add(buildSysLibSettings((ISysLib) it.next()));
-		}			
+		}
 		settings.setIncremental(linker.isIncremental());
 		settings.setMap(linker.isMap());
 		List<String> options = settings.getOptions();
@@ -168,12 +158,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	}
 
 	@SuppressWarnings("unchecked")
-	private NarCompiler buildCompilerSettings(final ICompiler compiler, final String buildType, final ITest test) throws MojoFailureException, MojoExecutionException {
+	private NarCompiler buildCompilerSettings(final ICompiler compiler, final String buildType, final ITest test) throws MojoFailureException,
+			MojoExecutionException {
 		NarCompiler settings = new NarCompiler();
 		settings.setName(compiler.getName());
 		List<String> includePaths = settings.getIncludePaths();
 		includePaths.addAll(compiler.getIncludePaths(buildType));
-		
+
 		List<String> systemIncludes = compiler.getSystemIncludePaths();
 		if (systemIncludes != null) {
 			List<String> systemIncludePaths = settings.getSystemIncludePaths();
@@ -181,7 +172,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		}
 		List<File> sourceDirectories = settings.getSourceDirectories();
 		sourceDirectories.addAll(compiler.getSourceDirectories(buildType));
-		
+
 		settings.setDebug(compiler.isDebug());
 		settings.setRtti(compiler.isRtti());
 		settings.setOptimize(NarCompiler.OptimizationLevel.valueOf(compiler.getOptimize().toUpperCase()));
@@ -195,21 +186,21 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		options.addAll(compiler.getOptions());
 		Set<String> includes = settings.getIncludes();
 		for (Object include : compiler.getIncludes(buildType)) {
-			String includeStr = (String)include;
+			String includeStr = (String) include;
 			if (includeStr.trim().length() > 0) {
 				includes.add(includeStr);
 			}
 		}
 		Set<String> excludes = settings.getExcludes();
 		for (Object exclude : compiler.getExcludes(buildType, test)) {
-			String excludeStr = (String)exclude;
+			String excludeStr = (String) exclude;
 			if (excludeStr.trim().length() > 0) {
 				excludes.add(excludeStr);
 			}
 		}
 		return settings;
 	}
-	
+
 	public NarLib buildLibSettings(final ILib lib) {
 		logger.debug("NAR library: " + lib.getName());
 		NarLib settings = new NarLib();
@@ -218,7 +209,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		settings.setDirectory(lib.getDirectory());
 		return settings;
 	}
-	
+
 	public NarSysLib buildSysLibSettings(final ISysLib syslib) {
 		logger.debug("NAR sys library: " + syslib.getName());
 		NarSysLib settings = new NarSysLib();

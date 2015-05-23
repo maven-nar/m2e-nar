@@ -32,13 +32,10 @@ public interface ILinker {
 
 	public abstract boolean isMap();
 
-	public abstract List getOptions() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getOptions() throws MojoFailureException, MojoExecutionException;
 
-	public abstract List getLibs() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getLibs() throws MojoFailureException, MojoExecutionException;
 
-	public abstract List getSysLibs() throws MojoFailureException,
-			MojoExecutionException;
+	public abstract List getSysLibs() throws MojoFailureException, MojoExecutionException;
 
 }

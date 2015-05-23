@@ -51,8 +51,7 @@ public class EclipseNarLayout extends AbstractNarLayout {
 
 	public void addIncludeDirectory(File includeDirectory) {
 		if (!includeDirectory.isAbsolute()) {
-			includeDirectory = new File(project.getProject().getLocation()
-					.toFile(), includeDirectory.getPath());
+			includeDirectory = new File(project.getProject().getLocation().toFile(), includeDirectory.getPath());
 		}
 		this.includeDirectories.add(includeDirectory);
 	}
@@ -65,74 +64,67 @@ public class EclipseNarLayout extends AbstractNarLayout {
 		return null;
 	}
 
-    public File getNoArchDirectory( File baseDir, MavenProject project )
-    {
-        return null;
-    }
+	public File getNoArchDirectory(File baseDir, MavenProject project) {
+		return null;
+	}
 
-    private File getTargetDirectory(String type) {
+	private File getTargetDirectory(String type) {
 		return new File(project.getProject().getLocation().toFile(), CdtUtils.DEFAULT_CONFIG_NAME_PREFIX + type);
 	}
 
-	public final List<File> getIncludeDirectories(File baseDir,
-			NarArtifact artifact) {
+	public final List<File> getIncludeDirectories(File baseDir, NarArtifact artifact) {
 		return includeDirectories;
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see com.github.maven_nar.NarLayout#getIncludeDirectory(java.io.File)
-     */
-    public final File getIncludeDirectory( File baseDir, MavenProject project )
-    {
-    	return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.maven_nar.NarLayout#getIncludeDirectory(java.io.File)
+	 */
+	public final File getIncludeDirectory(File baseDir, MavenProject project) {
+		return null;
+	}
 
-	public final File getLibDirectory(File baseDir, NarArtifact artifact, String aol, String type)
-			throws MojoExecutionException {
+	public final File getLibDirectory(File baseDir, NarArtifact artifact, String aol, String type) throws MojoExecutionException {
 		return getTargetDirectory(type);
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see com.github.maven_nar.NarLayout#getLibDir(java.io.File, com.github.maven_nar.AOL,
-     * java.lang.String)
-     */
-    public final File getLibDirectory( File baseDir, MavenProject project, String aol, String type )
-        throws MojoExecutionException
-    {
-    	return getTargetDirectory(type);
-    }
-    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.maven_nar.NarLayout#getLibDir(java.io.File,
+	 * com.github.maven_nar.AOL, java.lang.String)
+	 */
+	public final File getLibDirectory(File baseDir, MavenProject project, String aol, String type) throws MojoExecutionException {
+		return getTargetDirectory(type);
+	}
+
 	public final File getBinDirectory(File baseDir, NarArtifact artifact, String aol) {
 		return getTargetDirectory(ILibrary.EXECUTABLE);
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see com.github.maven_nar.NarLayout#getLibDir(java.io.File, com.github.maven_nar.AOL,
-     * java.lang.String)
-     */
-    public final File getBinDirectory( File baseDir, MavenProject project, String aol )
-    {
-    	return getTargetDirectory(ILibrary.EXECUTABLE);
-    }
-    
-    /*
-	public final void prepareNarInfo(File baseDir, MavenProject project,
-			NarInfo narInfo, AbstractNarMojo mojo)
-			throws MojoExecutionException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.maven_nar.NarLayout#getLibDir(java.io.File,
+	 * com.github.maven_nar.AOL, java.lang.String)
+	 */
+	public final File getBinDirectory(File baseDir, MavenProject project, String aol) {
+		return getTargetDirectory(ILibrary.EXECUTABLE);
 	}
 
-	public File getNarUnpackDirectory(File baseUnpackDirectory, File narFile) {
-		return null;
-	}
-	*/
+	/*
+	 * public final void prepareNarInfo(File baseDir, MavenProject project,
+	 * NarInfo narInfo, AbstractNarMojo mojo) throws MojoExecutionException { }
+	 * 
+	 * public File getNarUnpackDirectory(File baseUnpackDirectory, File narFile)
+	 * { return null; }
+	 */
 
 	public List<String> getConfigurations() {
 		return new ArrayList<String>(artifactNames.keySet());
 	}
-	
+
 	public String getArtifactName(final String configuration) {
 		return artifactNames.get(configuration);
 	}

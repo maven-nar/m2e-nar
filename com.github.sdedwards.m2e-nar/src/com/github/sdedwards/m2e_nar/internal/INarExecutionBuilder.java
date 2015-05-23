@@ -26,5 +26,5 @@ import com.github.sdedwards.m2e_nar.internal.model.NarExecution;
 public interface INarExecutionBuilder {
 
 	public abstract NarExecution build(String buildType) throws CoreException;
-	
+
 }

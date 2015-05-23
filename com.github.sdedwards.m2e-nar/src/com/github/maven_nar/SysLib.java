@@ -29,32 +29,35 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @author Mark Donszelmann
  */
-public class SysLib implements ISysLib
-{
-    /**
-     * Name of the system library
-     * 
-     * @parameter default-value=""
-     * @required
-     */
-    private String name;
+public class SysLib implements ISysLib {
+	/**
+	 * Name of the system library
+	 * 
+	 * @parameter default-value=""
+	 * @required
+	 */
+	private String name;
 
-    /**
-     * Type of linking for this system library
-     * 
-     * @parameter default-value="shared"
-     * @required
-     */
-    private String type = ILibrary.SHARED;
+	/**
+	 * Type of linking for this system library
+	 * 
+	 * @parameter default-value="shared"
+	 * @required
+	 */
+	private String type = ILibrary.SHARED;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ISysLib#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.maven_nar.ISysLib#getType()
 	 */
 	public String getType() {
@@ -68,6 +71,5 @@ public class SysLib implements ISysLib
 	protected void setType(String type) {
 		this.type = type;
 	}
-	
-	
+
 }

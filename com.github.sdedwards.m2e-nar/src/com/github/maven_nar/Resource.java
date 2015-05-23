@@ -24,15 +24,11 @@ package com.github.maven_nar;
  * 
  * @author Greg Domjan
  */
-public class Resource
-    extends Compiler
-{
-    public Resource()
-    {
-    }
+public class Resource extends Compiler {
+	public Resource() {
+	}
 
-    public final String getLanguage()
-    {
-        return "res";
-    }
+	public final String getLanguage() {
+		return "res";
+	}
 }

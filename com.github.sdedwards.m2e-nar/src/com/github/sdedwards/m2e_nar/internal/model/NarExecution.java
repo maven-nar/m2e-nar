@@ -30,32 +30,34 @@ public class NarExecution {
 	public static final String TEST = "test";
 
 	private final MojoExecution mojoExecution;
-    private boolean skip;
-    private String os;
-    private String linkerName;
+	private boolean skip;
+	private String os;
+	private String linkerName;
 	private List<NarBuildArtifact> artifactSettings = new ArrayList<NarBuildArtifact>();
 
 	public NarExecution(final MojoExecution mojoExecution) {
 		this.mojoExecution = mojoExecution;
 	}
-	
+
 	public MojoExecution getMojoExecution() {
 		return mojoExecution;
 	}
-	
+
 	public boolean isSkip() {
 		return skip;
 	}
-	
+
 	public String getOS() {
 		return os;
 	}
-	
+
 	public String getLinkerName() {
 		return linkerName;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.m2e.cdt.internal.INarSettings#getArtifactSettings()
 	 */
 	public List<NarBuildArtifact> getArtifactSettings() {

@@ -34,30 +34,24 @@ import org.slf4j.LoggerFactory;
 public class NarBuildParticipant extends MojoExecutionBuildParticipant {
 
 	private static final Logger logger = LoggerFactory.getLogger(CProjectConfigurator.class);
-	
+
 	public NarBuildParticipant(MojoExecution execution, boolean runOnIncremental, boolean runOnConfiguration) {
 		super(execution, runOnIncremental, runOnConfiguration);
 	}
 
 	@Override
-	public Set<IProject> build(int kind, IProgressMonitor monitor)
-			throws Exception {
+	public Set<IProject> build(int kind, IProgressMonitor monitor) throws Exception {
 		logger.info("Build kind=" + kind + " for execution " + getMojoExecution().getExecutionId());
 		Set<IProject> retVal = null;
 		if (appliesToBuildKind(kind)) {
 			retVal = super.build(kind, monitor);
 			MavenProject project = getMavenProjectFacade().getMavenProject(monitor);
-			File generated = MavenPlugin.getMaven().getMojoParameterValue(project,
-					getMojoExecution(),
-					"outputDirectory",
-					File.class,
-					monitor);
+			File generated = MavenPlugin.getMaven().getMojoParameterValue(project, getMojoExecution(), "outputDirectory", File.class, monitor);
 			if (generated != null) {
 				getBuildContext().refresh(generated);
 			}
 		}
 		return retVal;
 	}
-	
-	
+
 }
