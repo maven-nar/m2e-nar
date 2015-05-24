@@ -13,8 +13,10 @@ public class It0010Test extends AbstractTestBuild {
 	public void build() throws CoreException, InterruptedException {
 		final String projectPath = itPath + "/it0010-lib-static";
 		final String buildArtifact = "nar-static/libit0010-lib-static-1.0-SNAPSHOT.a";
+		final String testArtifact = "nar-test-HelloWorldTest/HelloWorldTest";
 
 		IProject project = buildProject(projectPath);
 		assertTrue(project.exists(Path.fromOSString(buildArtifact)));
+		assertTrue(project.exists(Path.fromOSString(testArtifact)));
 	}
 }
