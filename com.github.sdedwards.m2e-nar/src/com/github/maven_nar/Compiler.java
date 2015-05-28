@@ -231,6 +231,13 @@ public abstract class Compiler implements ICompiler {
 	 */
 	private List options;
 
+    /**
+     * Additional options for the compiler when running in the nar-testCompile phase.
+     * 
+     * @parameter default-value=""
+     */
+    private List testOptions;
+
 	/**
 	 * Options for the compiler as a whitespace separated list. Will work in
 	 * combination with &lt;options&gt;.
@@ -570,6 +577,10 @@ public abstract class Compiler implements ICompiler {
 			}
 		}
 		return optionList;
+	}
+	
+	public List getTestOptions() {
+		return testOptions;
 	}
 
 	/*

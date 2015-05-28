@@ -34,6 +34,8 @@ public interface ILinker {
 
 	public abstract List getOptions() throws MojoFailureException, MojoExecutionException;
 
+	public abstract List getTestOptions();
+	
 	public abstract List getLibs() throws MojoFailureException, MojoExecutionException;
 
 	public abstract List getSysLibs() throws MojoFailureException, MojoExecutionException;

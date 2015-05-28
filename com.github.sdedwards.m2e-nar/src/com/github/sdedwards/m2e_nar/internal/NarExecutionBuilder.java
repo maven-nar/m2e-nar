@@ -111,7 +111,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 			}
 		}
 
-		settings.setLinkerSettings(buildLinkerSettings(narCompileMojo.getLinker(), linkCPP));
+		settings.setLinkerSettings(buildLinkerSettings(narCompileMojo.getLinker(), linkCPP, test));
 		settings.setCppSettings(buildCompilerSettings(narCompileMojo.getCpp(), buildType, test));
 		settings.setCSettings(buildCompilerSettings(narCompileMojo.getC(), buildType, test));
 
@@ -138,7 +138,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	}
 
 	@SuppressWarnings("unchecked")
-	public NarLinker buildLinkerSettings(final ILinker linker, final boolean linkCpp) throws MojoFailureException, MojoExecutionException {
+	public NarLinker buildLinkerSettings(final ILinker linker, final boolean linkCpp, final ITest test) throws MojoFailureException, MojoExecutionException {
 		NarLinker settings = new NarLinker();
 		settings.setName(linker.getName());
 		List<NarLib> libs = settings.getLibs();
@@ -153,6 +153,12 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		settings.setMap(linker.isMap());
 		List<String> options = settings.getOptions();
 		options.addAll(linker.getOptions());
+		if (test != null) {
+			List<String> testOptions = linker.getTestOptions();
+			if (testOptions != null) {
+				options.addAll(testOptions);
+			}
+		}
 		settings.setLinkCpp(linkCpp);
 		return settings;
 	}
@@ -184,6 +190,12 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		undefines.addAll(compiler.getUndefines());
 		List<String> options = settings.getOptions();
 		options.addAll(compiler.getOptions());
+		if (test != null) {
+			List<String> testOptions = compiler.getTestOptions();
+			if (testOptions != null) {
+				options.addAll(testOptions);
+			}
+		}
 		Set<String> includes = settings.getIncludes();
 		for (Object include : compiler.getIncludes(buildType)) {
 			String includeStr = (String) include;

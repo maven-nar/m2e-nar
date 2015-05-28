@@ -85,6 +85,13 @@ public class Linker implements ILinker {
 	 */
 	private List options;
 
+    /**
+     * Additional options for the linker when running in the nar-testCompile phase.
+     * 
+     * @parameter default-value=""
+     */
+    private List testOptions;
+
 	/**
 	 * Options for the linker as a whitespace separated list. Defaults to
 	 * Architecture-OS-Linker specific values. Will work in combination with
@@ -306,6 +313,10 @@ public class Linker implements ILinker {
 			}
 		}
 		return optionList;
+	}
+
+	public List getTestOptions() {
+		return testOptions;
 	}
 
 	private List buildLibList(String libraryList) {

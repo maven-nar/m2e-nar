@@ -35,14 +35,14 @@ public class NarTestCompileBuildParticipant extends NarBuildParticipant {
 		// What we need to do is run the nar-testCompile goal without any tests
 		// its configuration in order to just unpack.
 		Xpp3Dom configuration = new Xpp3Dom(execution.getConfiguration());
-		logger.info("Configuration before: " + configuration);
+		logger.debug("Configuration before: " + configuration);
 		for (int i = 0; i < configuration.getChildCount(); ++i) {
 			if ("tests".equals(configuration.getChild(i).getName())) {
 				configuration.removeChild(i);
 				break;
 			}
 		}
-		logger.info("Configuration after: " + configuration);
+		logger.debug("Configuration after: " + configuration);
 		getMojoExecution().setConfiguration(configuration);
 	}
 

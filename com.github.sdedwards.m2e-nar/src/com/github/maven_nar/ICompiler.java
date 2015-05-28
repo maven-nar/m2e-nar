@@ -53,6 +53,8 @@ public interface ICompiler {
 
 	public abstract List getOptions() throws MojoFailureException, MojoExecutionException;
 
+	public abstract List getTestOptions();
+	
 	public abstract boolean isExceptions();
 
 }

@@ -53,6 +53,11 @@ under the License.
           <cpp>
             <debug>true</debug>
           </cpp>
+          <c>
+            <testOptions>
+              <testOption>-DTESTOPT="this is a nar-testCompile flag"</testOption>
+            </testOptions>
+          </c>
           <libraries>
             <library>
               <type>jni</type>
@@ -65,6 +70,11 @@ under the License.
               <include></include>
             </includes>
           </javah>
+          <tests>
+            <test>
+              <name>HelloWorld</name>
+            </test>
+          </tests>
         </configuration>
       </plugin>
     </plugins>
