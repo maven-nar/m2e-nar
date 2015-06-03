@@ -37,6 +37,7 @@ public class NarCompiler {
 	private final List<String> systemIncludePaths = new ArrayList<String>();
 	private final List<File> sourceDirectories = new ArrayList<File>();
 
+	private boolean ignoreOptionElements = false;
 	private boolean debug;
 	private boolean rtti;
 	private OptimizationLevel optimize;
@@ -185,4 +186,13 @@ public class NarCompiler {
 		return excludes;
 	}
 
+	public boolean isIgnoreOptionElements() {
+		return ignoreOptionElements;
+	}
+
+	public void setIgnoreOptionElements(boolean ignoreOptionElements) {
+		this.ignoreOptionElements = ignoreOptionElements;
+	}
+
+	
 }

@@ -17,5 +17,5 @@ public class It0011Test extends AbstractTestBuild {
 		IProject project = buildProject(projectPath);
 		assertTrue(project.exists(Path.fromOSString(buildArtifact)));
 	}
-	
+
 }

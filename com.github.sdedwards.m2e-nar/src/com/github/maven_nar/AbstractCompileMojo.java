@@ -425,7 +425,7 @@ public abstract class AbstractCompileMojo extends AbstractDependencyMojo impleme
 				getLog().debug("Adding " + linkType + " library for test " + test.getName());
 				final File dir = new File(getMavenProject().getBasedir(), CdtUtils.DEFAULT_CONFIG_NAME_PREFIX + test.getLink());
 				final Lib library = new Lib();
-				library.setName(getMavenProject().getArtifactId());
+				library.setName(getOutput(linkType));
 				library.setDirectory(dir);
 				library.setType(linkType);
 				libraries.add(library);

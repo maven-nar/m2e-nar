@@ -55,10 +55,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(NarExecutionBuilder.class);
 	private final INarCompileMojo narCompileMojo;
 	private final MojoExecution mojoExecution;
+	private int narMajorVersion = -1;
+	private int narMinorVersion = -1;
 
 	public NarExecutionBuilder(final AbstractMojo compileMojo, final MojoExecution mojoExceution) {
 		this.narCompileMojo = (INarCompileMojo) compileMojo;
 		this.mojoExecution = mojoExceution;
+		parseNarVersionNumbers();
 	}
 
 	public NarExecution build(final String buildType) throws CoreException {
@@ -111,7 +114,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 			}
 		}
 
-		settings.setLinkerSettings(buildLinkerSettings(narCompileMojo.getLinker(), linkCPP));
+		settings.setLinkerSettings(buildLinkerSettings(narCompileMojo.getLinker(), linkCPP, test));
 		settings.setCppSettings(buildCompilerSettings(narCompileMojo.getCpp(), buildType, test));
 		settings.setCSettings(buildCompilerSettings(narCompileMojo.getC(), buildType, test));
 
@@ -138,7 +141,7 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	}
 
 	@SuppressWarnings("unchecked")
-	public NarLinker buildLinkerSettings(final ILinker linker, final boolean linkCpp) throws MojoFailureException, MojoExecutionException {
+	public NarLinker buildLinkerSettings(final ILinker linker, final boolean linkCpp, final ITest test) throws MojoFailureException, MojoExecutionException {
 		NarLinker settings = new NarLinker();
 		settings.setName(linker.getName());
 		List<NarLib> libs = settings.getLibs();
@@ -153,6 +156,12 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		settings.setMap(linker.isMap());
 		List<String> options = settings.getOptions();
 		options.addAll(linker.getOptions());
+		if (test != null) {
+			List<String> testOptions = linker.getTestOptions();
+			if (testOptions != null) {
+				options.addAll(testOptions);
+			}
+		}
 		settings.setLinkCpp(linkCpp);
 		return settings;
 	}
@@ -173,6 +182,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		List<File> sourceDirectories = settings.getSourceDirectories();
 		sourceDirectories.addAll(compiler.getSourceDirectories(buildType));
 
+		// The meaning of clearDefaultOptions changed in nar-maven-plugin-3.1.0.
+		// Now it means not only clear the default options from AOL properties
+		// but also ignore the multithread, debug, exceptions, rtti and optimization
+		// elements from the configuration. 
+		if (narMajorVersion > 3 || (narMajorVersion == 3 && narMinorVersion >= 1)) {
+			settings.setIgnoreOptionElements(compiler.isClearDefaultOptions());
+		}
 		settings.setDebug(compiler.isDebug());
 		settings.setRtti(compiler.isRtti());
 		settings.setOptimize(NarCompiler.OptimizationLevel.valueOf(compiler.getOptimize().toUpperCase()));
@@ -184,6 +200,12 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		undefines.addAll(compiler.getUndefines());
 		List<String> options = settings.getOptions();
 		options.addAll(compiler.getOptions());
+		if (test != null) {
+			List<String> testOptions = compiler.getTestOptions();
+			if (testOptions != null) {
+				options.addAll(testOptions);
+			}
+		}
 		Set<String> includes = settings.getIncludes();
 		for (Object include : compiler.getIncludes(buildType)) {
 			String includeStr = (String) include;
@@ -216,5 +238,26 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		settings.setName(syslib.getName());
 		settings.setType(syslib.getType());
 		return settings;
+	}
+	
+	private void parseNarVersionNumbers() {
+		final String version = mojoExecution.getVersion();
+		String[] versions = version.split("\\.");
+		if (versions.length > 0) {
+			try {
+				narMajorVersion = Integer.parseInt(versions[0]);
+				logger.info("narMajorVersion=" + narMajorVersion);
+			} catch (NumberFormatException e) {
+				logger.error("Failed to parse NAR major version number", e);
+			}
+		}
+		if (versions.length > 1) {
+			try {
+				narMinorVersion = Integer.parseInt(versions[1]);
+				logger.info("narMinorVersion=" + narMinorVersion);
+			} catch (NumberFormatException e) {
+				logger.error("Failed to parse NAR minor version number", e);
+			}
+		}
 	}
 }

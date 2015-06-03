@@ -67,4 +67,10 @@ public final class CdtUtils {
 		return configNamePrefix + artifactSettings.getArtifactName();
 	}
 
+	public static String escapeOption(String option) {
+		if (option.matches(".*\".*\".*")) {
+			return "'" + option + "'";
+		}
+		return option;
+	}
 }

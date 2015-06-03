@@ -1,7 +1,7 @@
 package com.github.sdedwards.m2e_nar;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,12 +50,9 @@ import org.junit.Before;
 @SuppressWarnings("restriction")
 public class AbstractTestBuild {
 
-	private static final String settingsFile = System
-			.getProperty("m2e_nar.settings");
-	// "target/it/interpolated-settings.xml";
+	private static final String settingsFile = System.getProperty("m2e_nar.settings");
 
-	protected static final String itPath = System.getProperty("m2e_nar.itPath",
-			"it");
+	protected static final String itPath = System.getProperty("m2e_nar.itPath", "it");
 
 	private IWorkspace workspace;
 
@@ -59,8 +60,7 @@ public class AbstractTestBuild {
 
 	private String oldUserSettingsFile = null;
 
-	private File repo;
-
+	@SuppressWarnings("deprecation")
 	@Before
 	public void setUp() throws Exception {
 		workspace = ResourcesPlugin.getWorkspace();
@@ -71,8 +71,7 @@ public class AbstractTestBuild {
 		workspace.setDescription(description);
 
 		// Turn off index updating
-		IEclipsePreferences store = new DefaultScope()
-				.getNode(IMavenConstants.PLUGIN_ID);
+		IEclipsePreferences store = new DefaultScope().getNode(IMavenConstants.PLUGIN_ID);
 		store.putBoolean(MavenPreferenceConstants.P_UPDATE_INDEXES, false);
 
 		mavenConfiguration = MavenPlugin.getMavenConfiguration();
@@ -82,20 +81,11 @@ public class AbstractTestBuild {
 			File settings = new File(settingsFile).getCanonicalFile();
 			if (settings.canRead()) {
 				String userSettingsFile = settings.getAbsolutePath();
-				System.out.println("Setting user settings file: "
-						+ userSettingsFile);
+				System.out.println("Setting user settings file: " + userSettingsFile);
 				mavenConfiguration.setUserSettingsFile(userSettingsFile);
 			} else {
 				fail("User settings file cannot be read: " + settings);
 			}
-		}
-
-		ArtifactRepository localRepository = MavenPlugin.getMaven()
-				.getLocalRepository();
-		if (localRepository != null) {
-			repo = new File(localRepository.getBasedir());
-		} else {
-			fail("Cannot determine local repository path");
 		}
 
 		cleanWorkspace();
@@ -112,8 +102,7 @@ public class AbstractTestBuild {
 
 		if (oldUserSettingsFile != null) {
 			// Restore the user settings file location
-			System.out.println("Restoring user settings file: "
-					+ oldUserSettingsFile);
+			System.out.println("Restoring user settings file: " + oldUserSettingsFile);
 			mavenConfiguration.setUserSettingsFile(oldUserSettingsFile);
 		}
 	}
@@ -149,29 +138,21 @@ public class AbstractTestBuild {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					final IProjectConfigurationManager configManager = MavenPlugin
-							.getProjectConfigurationManager();
-					final MavenModelManager mavenModelManager = MavenPlugin
-							.getMavenModelManager();
+					final IProjectConfigurationManager configManager = MavenPlugin.getProjectConfigurationManager();
+					final MavenModelManager mavenModelManager = MavenPlugin.getMavenModelManager();
 
 					final ProjectImportConfiguration configuration = new ProjectImportConfiguration();
 
-					final LocalProjectScanner scanner = new LocalProjectScanner(
-							workspace.getRoot().getLocation().toFile(), path,
-							true, mavenModelManager);
+					final LocalProjectScanner scanner = new LocalProjectScanner(workspace.getRoot().getLocation().toFile(), path, true, mavenModelManager);
 					scanner.run(monitor);
 
 					final List<MavenProjectInfo> projects = getProjects(scanner.getProjects());
-					
+
 					workspace.run(new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor)
-								throws CoreException {
-							importResults.addAll(configManager.importProjects(
-									projects, configuration,
-									monitor));
+						public void run(IProgressMonitor monitor) throws CoreException {
+							importResults.addAll(configManager.importProjects(projects, configuration, monitor));
 						}
-					}, MavenPlugin.getProjectConfigurationManager().getRule(),
-							IWorkspace.AVOID_UPDATE, monitor);
+					}, MavenPlugin.getProjectConfigurationManager().getRule(), IWorkspace.AVOID_UPDATE, monitor);
 				} catch (CoreException e) {
 					return e.getStatus();
 				} catch (InterruptedException e) {
@@ -190,28 +171,54 @@ public class AbstractTestBuild {
 				createdProjects.add(p);
 			}
 		}
-		assertFalse("Could not create project " + path,
-				createdProjects.isEmpty());
+		assertFalse("Could not create project " + path, createdProjects.isEmpty());
 		return createdProjects;
 	}
 
-	protected IProject buildProject(final String projectPath)
-			throws CoreException, InterruptedException {
+	protected IProject buildProject(final String projectPath) throws CoreException, InterruptedException {
 		List<IProject> createdProjects = importProject(projectPath);
 		final IProject project = createdProjects.get(0);
 		validateCdtProject(project);
 
 		workspace.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		waitForJobs();
+		
+		buildAllConfigurations(project);
 
 		assertFalse("Build errors", hasErrorMarkers(project));
 
 		return project;
 	}
 
+	protected void buildAllConfigurations(final IProject project) {
+		final ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(project, false);
+		if (prjd != null) {
+			final ICConfigurationDescription[] cfgDescriptions = prjd.getConfigurations();
+			if (cfgDescriptions != null && cfgDescriptions.length > 0) {
+				final IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
+				for (int i=0; i < cfgDescriptions.length; ++i) {
+					cfgs[i] = ManagedBuildManager.getConfigurationForDescription(cfgDescriptions[i]);
+				}
+				final Job job = new Job("Building all configurations") {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							ManagedBuildManager.buildConfigurations(cfgs, monitor);
+						} catch (CoreException e) {
+							return e.getStatus();
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
+				waitForJobs();
+			}
+		}		
+	}
+	
 	private void validateCdtProject(IProject project) {
-		final MavenProjectManager projectManager = MavenPluginActivator
-				.getDefault().getMavenProjectManager();
+		final MavenProjectManager projectManager = MavenPluginActivator.getDefault().getMavenProjectManager();
 		final IMavenProjectFacade facade = projectManager.getProject(project);
 		assertNotNull(facade);
 	}
@@ -259,8 +266,7 @@ public class AbstractTestBuild {
 		int errorCount = 0;
 		int warnCount = 0;
 		int infoCount = 0;
-		for (final IMarker marker : project.findMarkers(IMarker.PROBLEM, true,
-				IResource.DEPTH_INFINITE)) {
+		for (final IMarker marker : project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
 			final Object severity = marker.getAttribute(IMarker.SEVERITY);
 			final StringBuilder message = new StringBuilder();
 			if (severity != null) {
@@ -275,14 +281,11 @@ public class AbstractTestBuild {
 					message.append("INFO: ");
 				}
 			}
-			System.out.println(message.toString()
-					+ marker.getAttribute(IMarker.MESSAGE) + " ("
-					+ marker.getResource().getName() + ":"
+			System.out.println(message.toString() + marker.getAttribute(IMarker.MESSAGE) + " (" + marker.getResource().getName() + ":"
 					+ marker.getAttribute(IMarker.LINE_NUMBER) + ")");
 		}
-		System.out.println(project.getName() + " has " + errorCount
-				+ " error marker(s), " + warnCount + " warning marker(s), "
-				+ infoCount + " info marker(s)");
+		System.out
+				.println(project.getName() + " has " + errorCount + " error marker(s), " + warnCount + " warning marker(s), " + infoCount + " info marker(s)");
 		return errorCount != 0;
 	}
 }
