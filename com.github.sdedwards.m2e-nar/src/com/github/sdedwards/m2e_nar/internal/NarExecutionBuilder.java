@@ -55,10 +55,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(NarExecutionBuilder.class);
 	private final INarCompileMojo narCompileMojo;
 	private final MojoExecution mojoExecution;
+	private int narMajorVersion = -1;
+	private int narMinorVersion = -1;
 
 	public NarExecutionBuilder(final AbstractMojo compileMojo, final MojoExecution mojoExceution) {
 		this.narCompileMojo = (INarCompileMojo) compileMojo;
 		this.mojoExecution = mojoExceution;
+		parseNarVersionNumbers();
 	}
 
 	public NarExecution build(final String buildType) throws CoreException {
@@ -179,6 +182,13 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		List<File> sourceDirectories = settings.getSourceDirectories();
 		sourceDirectories.addAll(compiler.getSourceDirectories(buildType));
 
+		// The meaning of clearDefaultOptions changed in nar-maven-plugin-3.1.0.
+		// Now it means not only clear the default options from AOL properties
+		// but also ignore the multithread, debug, exceptions, rtti and optimization
+		// elements from the configuration. 
+		if (narMajorVersion > 3 || (narMajorVersion == 3 && narMinorVersion >= 1)) {
+			settings.setIgnoreOptionElements(compiler.isClearDefaultOptions());
+		}
 		settings.setDebug(compiler.isDebug());
 		settings.setRtti(compiler.isRtti());
 		settings.setOptimize(NarCompiler.OptimizationLevel.valueOf(compiler.getOptimize().toUpperCase()));
@@ -228,5 +238,26 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		settings.setName(syslib.getName());
 		settings.setType(syslib.getType());
 		return settings;
+	}
+	
+	private void parseNarVersionNumbers() {
+		final String version = mojoExecution.getVersion();
+		String[] versions = version.split("\\.");
+		if (versions.length > 0) {
+			try {
+				narMajorVersion = Integer.parseInt(versions[0]);
+				logger.info("narMajorVersion=" + narMajorVersion);
+			} catch (NumberFormatException e) {
+				logger.error("Failed to parse NAR major version number", e);
+			}
+		}
+		if (versions.length > 1) {
+			try {
+				narMinorVersion = Integer.parseInt(versions[1]);
+				logger.info("narMinorVersion=" + narMinorVersion);
+			} catch (NumberFormatException e) {
+				logger.error("Failed to parse NAR minor version number", e);
+			}
+		}
 	}
 }

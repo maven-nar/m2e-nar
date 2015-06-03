@@ -73,11 +73,11 @@ public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchro
 		flags.append(defaultFlags);
 		for (String option : compilerSettings.getOptions()) {
 			flags.append(" ");
-			flags.append(option);
+			flags.append(CdtUtils.escapeOption(option));
 		}
 
 		// Add no exceptions flag if required
-		if (!compilerSettings.isExceptions()) {
+		if (!compilerSettings.isIgnoreOptionElements() && !compilerSettings.isExceptions()) {
 			flags.append(" ");
 			flags.append(noExceptions);
 		}
@@ -112,39 +112,46 @@ public abstract class AbstractGnuCompilerSynchroniser implements SettingsSynchro
 	}
 
 	protected void setOptimization(final OptionSetter optionSetter, final NarBuildArtifact settings) throws CoreException {
-		OptimizationLevel optLevel = getCompilerSettings(settings).getOptimize();
+		final NarCompiler compilerSettings = getCompilerSettings(settings);
 		GnuOptimizationLevel levelGcc = GnuOptimizationLevel.NONE;
-		switch (optLevel) {
-		case NONE:
-			levelGcc = GnuOptimizationLevel.NONE;
-			break;
-		case SIZE:
-			levelGcc = GnuOptimizationLevel.SIZE;
-			break;
-		case MINIMAL:
-			levelGcc = GnuOptimizationLevel.OPTIMIZE;
-			break;
-		case SPEED:
-			levelGcc = GnuOptimizationLevel.OPTIMIZE;
-			break;
-		case FULL:
-			levelGcc = GnuOptimizationLevel.MORE;
-			break;
-		case AGGRESSIVE:
-			levelGcc = GnuOptimizationLevel.MOST;
-			break;
-		case EXTREME:
-			levelGcc = GnuOptimizationLevel.MOST;
-			break;
-		case UNSAFE:
-			levelGcc = GnuOptimizationLevel.MOST;
-			break;
+		if (!compilerSettings.isIgnoreOptionElements()) {
+			final OptimizationLevel optLevel = compilerSettings.getOptimize();
+			switch (optLevel) {
+			case NONE:
+				levelGcc = GnuOptimizationLevel.NONE;
+				break;
+			case SIZE:
+				levelGcc = GnuOptimizationLevel.SIZE;
+				break;
+			case MINIMAL:
+				levelGcc = GnuOptimizationLevel.OPTIMIZE;
+				break;
+			case SPEED:
+				levelGcc = GnuOptimizationLevel.OPTIMIZE;
+				break;
+			case FULL:
+				levelGcc = GnuOptimizationLevel.MORE;
+				break;
+			case AGGRESSIVE:
+				levelGcc = GnuOptimizationLevel.MOST;
+				break;
+			case EXTREME:
+				levelGcc = GnuOptimizationLevel.MOST;
+				break;
+			case UNSAFE:
+				levelGcc = GnuOptimizationLevel.MOST;
+				break;
+			}
 		}
 		optionSetter.setOption(getOptLevelOptionId(), getOptLevel(levelGcc));
 	}
 
 	protected void setDebug(final OptionSetter optionSetter, final NarBuildArtifact settings) throws CoreException {
-		boolean debug = getCompilerSettings(settings).isDebug();
+		final NarCompiler compilerSettings = getCompilerSettings(settings);
+		boolean debug = false;
+		if (!compilerSettings.isIgnoreOptionElements()) {
+			debug = compilerSettings.isDebug();
+		}
 		GnuDebugLevel debugLevel = (debug ? GnuDebugLevel.DEFAULT : GnuDebugLevel.NONE);
 
 		optionSetter.setOption(getDebugLevelOptionId(), getDebugLevel(debugLevel));

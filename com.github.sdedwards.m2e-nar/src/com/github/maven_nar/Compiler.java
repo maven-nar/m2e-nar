@@ -594,4 +594,8 @@ public abstract class Compiler implements ICompiler {
 
 	protected abstract String getLanguage();
 
+	public boolean isClearDefaultOptions() {
+		return clearDefaultOptions;
+	}
+
 }

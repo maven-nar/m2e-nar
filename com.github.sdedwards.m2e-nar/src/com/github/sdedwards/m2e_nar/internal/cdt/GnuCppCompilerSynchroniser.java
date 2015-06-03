@@ -138,7 +138,7 @@ public class GnuCppCompilerSynchroniser extends AbstractGnuCompilerSynchroniser 
 	@Override
 	public String getFlags(final NarCompiler compilerSettings) {
 		final String flags = super.getFlags(compilerSettings);
-		if (!compilerSettings.isRtti()) {
+		if (!compilerSettings.isIgnoreOptionElements() && !compilerSettings.isRtti()) {
 			return flags + " " + noRtti;
 		}
 		return flags;

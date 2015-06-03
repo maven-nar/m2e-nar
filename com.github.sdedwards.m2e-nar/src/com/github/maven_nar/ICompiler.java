@@ -57,4 +57,5 @@ public interface ICompiler {
 	
 	public abstract boolean isExceptions();
 
+	public abstract boolean isClearDefaultOptions();
 }

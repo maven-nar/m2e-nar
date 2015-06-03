@@ -171,12 +171,14 @@ public abstract class AbstractSettingsSynchroniser implements SettingsSynchronis
 
 		final List<ICMacroEntry> cMacroEntries = new ArrayList<ICMacroEntry>();
 		for (final String define : settings.getCSettings().getDefines()) {
-			ICMacroEntry macroEntry = createMacroEntry(define, 0);
+			final String escapedDefine = CdtUtils.escapeOption(define);
+			ICMacroEntry macroEntry = createMacroEntry(escapedDefine, 0);
 			cMacroEntries.add(macroEntry);
 		}
 		final List<ICMacroEntry> cppMacroEntries = new ArrayList<ICMacroEntry>();
 		for (final String define : settings.getCppSettings().getDefines()) {
-			ICMacroEntry macroEntry = createMacroEntry(define, 0);
+			final String escapedDefine = CdtUtils.escapeOption(define);
+			ICMacroEntry macroEntry = createMacroEntry(escapedDefine, 0);
 			cppMacroEntries.add(macroEntry);
 		}
 		for (ICLanguageSetting setting : languageSettings) {
