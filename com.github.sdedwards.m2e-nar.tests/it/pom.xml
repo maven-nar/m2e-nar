@@ -62,5 +62,8 @@ under the License.
     <module>it0021-executable-dep-lib-3rdparty</module>
     <module>it0022-objective-c-executable</module>
     <module>it0023-local-aol-properties</module>
+    <module>it0024-namedout</module>
+    <module>it0025-jar-dep-jni</module>
+    <module>it0026-native-lib-loader</module>
   </modules>
 </project>
