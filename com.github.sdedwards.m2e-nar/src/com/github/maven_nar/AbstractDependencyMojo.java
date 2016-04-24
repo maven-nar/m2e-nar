@@ -313,7 +313,7 @@ public abstract class AbstractDependencyMojo extends AbstractNarMojo {
 			return null;
 		}
 		IMavenProjectFacade dependency = projectManager.getMavenProject(artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion());
-		if (dependency == null) {
+		if (dependency == null || dependency.getFullPath(artifact.getFile()) == null) {
 			return null;
 		}
 		if (dependency.getProject().equals(facade.getProject())) {

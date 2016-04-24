@@ -15,7 +15,7 @@
 	<name>NAR Maven Plugin Integration for Eclipse (update site)</name>
 
 	<build>
-		<finalName>m2e-nar-updatesite-${project.version}</finalName>
+		<finalName>m2e-nar-updatesite-${qualifiedVersion}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>de.jutzig</groupId>

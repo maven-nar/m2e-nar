@@ -343,8 +343,8 @@ public abstract class Compiler implements ICompiler {
 	 * 
 	 * @see com.github.maven_nar.ICompiler#getIncludePaths(java.lang.String)
 	 */
-	public final List<String> getIncludePaths(String type) {
-		List<String> includePathList = createIncludePaths(type, type.equals(TEST) ? testIncludePaths : includePaths);
+	public final List<IncludePath> getIncludePaths(String type) {
+		List<IncludePath> includePathList = createIncludePaths(type, type.equals(TEST) ? testIncludePaths : includePaths);
 		if (type.equals(TEST)) {
 			// Add main includes paths too
 			includePathList.addAll(createIncludePaths(MAIN, includePaths));
@@ -352,16 +352,18 @@ public abstract class Compiler implements ICompiler {
 		return includePathList;
 	}
 
-	private List<String> createIncludePaths(String type, List paths) {
+	private List<IncludePath> createIncludePaths(String type, List paths) {
 		List includeList = paths;
 		if (includeList == null || (paths.size() == 0)) {
 			includeList = new ArrayList();
 			for (Iterator i = getSourceDirectories(type).iterator(); i.hasNext();) {
 				// VR 20100318 only add include directories that exist - we now
 				// fail the build fast if an include directory does not exist
-				File includePath = new File((File) i.next(), "include");
-				if (includePath.isDirectory()) {
-					includeList.add(includePath.getPath());
+				File file = new File((File) i.next(), "include");
+				if (file.isDirectory()) {
+	                IncludePath includePath = new IncludePath();
+	                includePath.setPath( file.getPath() );
+					includeList.add(includePath);
 				}
 			}
 		}

@@ -31,7 +31,7 @@ public interface ICompiler {
 
 	public abstract List/* <File> */getSourceDirectories(String type);
 
-	public abstract List/* <String> */getIncludePaths(String type);
+	public abstract List/* <IncludePath> */getIncludePaths(String type);
 
 	public abstract List/* <String> */getSystemIncludePaths();
 
