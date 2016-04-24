@@ -42,6 +42,7 @@ import com.github.maven_nar.ILinker;
 import com.github.maven_nar.INarCompileMojo;
 import com.github.maven_nar.ISysLib;
 import com.github.maven_nar.ITest;
+import com.github.maven_nar.IncludePath;
 import com.github.sdedwards.m2e_nar.MavenNarPlugin;
 import com.github.sdedwards.m2e_nar.internal.cdt.CdtUtils;
 import com.github.sdedwards.m2e_nar.internal.model.NarBuildArtifact;
@@ -172,7 +173,10 @@ public class NarExecutionBuilder implements INarExecutionBuilder {
 		NarCompiler settings = new NarCompiler();
 		settings.setName(compiler.getName());
 		List<String> includePaths = settings.getIncludePaths();
-		includePaths.addAll(compiler.getIncludePaths(buildType));
+		for (Object obj : compiler.getIncludePaths(buildType)) {
+			IncludePath includePath = (IncludePath)obj;
+			includePaths.add(includePath.getPath());
+		}
 
 		List<String> systemIncludes = compiler.getSystemIncludePaths();
 		if (systemIncludes != null) {
