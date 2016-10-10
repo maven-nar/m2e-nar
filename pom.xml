@@ -69,7 +69,7 @@ under the License.
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>0.23.0</tycho-version>
-		<eclipse-repo.url>http://download.eclipse.org/releases/luna</eclipse-repo.url>
+		<eclipse-repo.url>http://download.eclipse.org/releases/mars</eclipse-repo.url>
 		<github.repo.id>sdedwards/m2e-nar</github.repo.id>
 	</properties>
 

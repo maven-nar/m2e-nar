@@ -51,13 +51,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.m2e.core.internal.IMavenConstants;
+import org.eclipse.m2e.core.internal.lifecyclemapping.LifecycleMappingFactory;
 import org.eclipse.m2e.core.lifecyclemapping.model.IPluginExecutionMetadata;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant;
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator;
 import org.eclipse.m2e.core.project.configurator.MojoExecutionBuildParticipant;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
-import org.eclipse.m2e.jdt.internal.JavaProjectConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +73,7 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 
 	private static final Logger logger = LoggerFactory.getLogger(CProjectConfigurator.class);
 	public static final String CONFIGURATOR_ID = "com.github.sdedwards.m2e_nar.cConfigurator";
+	public static final String JAVA_CONFIGURATOR_ID = "org.eclipse.m2e.jdt.javaConfigurator";
 
 	@Override
 	public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
@@ -111,7 +112,7 @@ public class CProjectConfigurator extends AbstractProjectConfigurator {
 			}
 		}
 
-		JavaProjectConfigurator jConfig = new JavaProjectConfigurator();
+		AbstractProjectConfigurator jConfig = LifecycleMappingFactory.createProjectConfigurator(JAVA_CONFIGURATOR_ID);
 		jConfig.configure(request, monitor);
 
 		// ensure CDT builder is after the Maven one
