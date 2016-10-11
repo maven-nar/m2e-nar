@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.github.sdedwards.m2e-nar</groupId>
 		<artifactId>m2e-nar</artifactId>
-		<version>1.0.4-SNAPSHOT</version>
+		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>com.github.sdedwards.m2e-nar.test</artifactId>
