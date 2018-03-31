@@ -21,3 +21,6 @@ Export-Package: com.github.maven_nar;x-internal:=true,
  com.github.sdedwards.m2e_nar,
  com.github.sdedwards.m2e_nar.internal;x-internal:=true,
  com.github.sdedwards.m2e_nar.internal.model;x-internal:=true
+Bundle-ClassPath: lib/maven-common-artifact-filters-1.4.jar,
+ lib/maven-plugin-annotations-3.2.jar,
+ .

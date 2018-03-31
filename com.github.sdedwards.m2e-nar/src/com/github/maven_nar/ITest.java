@@ -19,12 +19,14 @@
  */
 package com.github.maven_nar;
 
+import java.util.List;
+
 import org.apache.maven.plugin.MojoFailureException;
 
 public interface ITest extends Executable {
 
 	public abstract String getName() throws MojoFailureException;
 
-	public abstract String getLink();
+	public abstract String getLink(List<ILibrary> libraries);
 
 }

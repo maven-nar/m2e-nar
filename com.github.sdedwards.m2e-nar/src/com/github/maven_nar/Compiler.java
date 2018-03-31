@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -43,223 +44,198 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public abstract class Compiler implements ICompiler {
 
-	/**
-	 * The name of the compiler. Some choices are: "msvc", "g++", "gcc", "CC",
-	 * "cc", "icc", "icpc", ... Default is Architecture-OS-Linker specific:
-	 * FIXME: table missing
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String name;
+  /**
+   * The name of the compiler. Some choices are: "msvc", "g++", "gcc", "CC",
+   * "cc", "icc", "icpc", ... Default is
+   * Architecture-OS-Linker specific: FIXME: table missing
+   */
+  @Parameter
+  private String name;
 
-	/**
-	 * Path location of the compile tool
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String toolPath;
+  /**
+   * The prefix for the compiler.
+   */
+  @Parameter
+  private String prefix;
 
-	/**
-	 * Source directory for native files
-	 * 
-	 * @parameter default-value="${basedir}/src/main"
-	 * @required
-	 */
-	private File sourceDirectory;
+  /**
+   * Path location of the compile tool
+   */
+  @Parameter
+  private String toolPath;
 
-	/**
-	 * Source directory for native test files
-	 * 
-	 * @parameter default-value="${basedir}/src/test"
-	 * @required
-	 */
-	private File testSourceDirectory;
+  /**
+   * Source directory for native files
+   */
+  @Parameter(defaultValue = "${basedir}/src/main", required = true)
+  private File sourceDirectory;
 
-	/**
-	 * Include patterns for sources
-	 * 
-	 * @parameter default-value=""
-	 * @required
-	 */
-	private Set includes = new HashSet();
+  /**
+   * Source directory for native test files
+   */
+  @Parameter(defaultValue = "${basedir}/src/test", required = true)
+  private File testSourceDirectory;
 
-	/**
-	 * Exclude patterns for sources
-	 * 
-	 * @parameter default-value=""
-	 * @required
-	 */
-	private Set excludes = new HashSet();
+  /**
+   * To use full path for the filenames.
+   * false to have "relative" path
+   * true to have "absolute" path
+   * absolute: will give path from filesystem root "/"
+   * relative: will give relative path from "workdir" which is usually after "${basedir}/src/main"
+   */
+  @Parameter(required = true)
+  private boolean gccFileAbsolutePath = false;
 
-	/**
-	 * Include patterns for test sources
-	 * 
-	 * @parameter default-value=""
-	 * @required
-	 */
-	private Set testIncludes = new HashSet();
+  /**
+   * Include patterns for sources
+   */
+  @Parameter(required = true)
+  private Set<String> includes = new HashSet<String>();
 
-	/**
-	 * Exclude patterns for test sources
-	 * 
-	 * @parameter default-value=""
-	 * @required
-	 */
-	private Set testExcludes = new HashSet();
+  /**
+   * Exclude patterns for sources
+   */
+  @Parameter(required = true)
+  private Set<String> excludes = new HashSet<String>();
 
-	/**
-	 * Compile with debug information.
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	// Done
-	private boolean debug = false;
+  /**
+   * Include patterns for test sources
+   */
+  @Parameter(required = true)
+  private Set<String> testIncludes = new HashSet<String>();
 
-	/**
-	 * Enables generation of exception handling code.
-	 * 
-	 * @parameter default-value="true"
-	 * @required
-	 */
-	// Done
-	private boolean exceptions = true;
+  /**
+   * Exclude patterns for test sources
+   */
+  @Parameter(required = true)
+  private Set<String> testExcludes = new HashSet<String>();
 
-	/**
-	 * Enables run-time type information.
-	 * 
-	 * @parameter default-value="true"
-	 * @required
-	 */
-	// Done
-	private boolean rtti = true;
+  @Parameter(defaultValue = "false", required = false)
+  private boolean ccache = false;
 
-	/**
-	 * Sets optimization. Possible choices are: "none", "size", "minimal",
-	 * "speed", "full", "aggressive", "extreme", "unsafe".
-	 * 
-	 * @parameter default-value="none"
-	 * @required
-	 */
-	// Done
-	private String optimize = "none";
+  /**
+   * Compile with debug information.
+   */
+  @Parameter(required = true)
+  private boolean debug = false;
 
-	/**
-	 * Enables or disables generation of multi-threaded code. Default value:
-	 * false, except on Windows.
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	// not used
-	private boolean multiThreaded = false;
+  /**
+   * Enables generation of exception handling code.
+   */
+  @Parameter(defaultValue = "true", required = true)
+  private boolean exceptions = true;
 
-	/**
-	 * Defines
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List defines;
+  /**
+   * Enables run-time type information.
+   */
+  @Parameter(defaultValue = "true", required = true)
+  private boolean rtti = true;
 
-	/**
-	 * Defines for the compiler as a comma separated list of name[=value] pairs,
-	 * where the value is optional. Will work in combination with
-	 * &lt;defines&gt;.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String defineSet;
+  /**
+   * Sets optimization. Possible choices are: "none", "size", "minimal",
+   * "speed", "full", "aggressive", "extreme",
+   * "unsafe".
+   */
+  @Parameter(defaultValue = "none", required = true)
+  private String optimize = "none";
 
-	/**
-	 * Clears default defines
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean clearDefaultDefines;
+  /**
+   * Enables or disables generation of multi-threaded code. Default value:
+   * false, except on Windows.
+   */
+  @Parameter(required = true)
+  private boolean multiThreaded = false;
 
-	/**
-	 * Undefines
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List undefines;
+  /**
+   * Defines
+   */
+  @Parameter
+  private List<String> defines;
 
-	/**
-	 * Undefines for the compiler as a comma separated list of name[=value]
-	 * pairs where the value is optional. Will work in combination with
-	 * &lt;undefines&gt;.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String undefineSet;
+  /**
+   * Defines for the compiler as a comma separated list of name[=value] pairs,
+   * where the value is optional. Will work
+   * in combination with &lt;defines&gt;.
+   */
+  @Parameter
+  private String defineSet;
 
-	/**
-	 * Clears default undefines
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean clearDefaultUndefines;
+  /**
+   * Clears default defines
+   */
+  @Parameter(required = true)
+  private boolean clearDefaultDefines;
 
-	/**
-	 * Include Paths. Defaults to "${sourceDirectory}/include"
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List includePaths;
+  /**
+   * Undefines
+   */
+  @Parameter
+  private List<String> undefines;
 
-	/**
-	 * Test Include Paths. Defaults to "${testSourceDirectory}/include"
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List testIncludePaths;
+  /**
+   * Undefines for the compiler as a comma separated list of name[=value] pairs
+   * where the value is optional. Will work
+   * in combination with &lt;undefines&gt;.
+   */
+  @Parameter
+  private String undefineSet;
 
-	/**
-	 * System Include Paths, which are added at the end of all include paths
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List systemIncludePaths;
+  /**
+   * Clears default undefines
+   */
+  @Parameter
+  private boolean clearDefaultUndefines;
 
-	/**
-	 * Additional options for the C++ compiler Defaults to
-	 * Architecture-OS-Linker specific values. FIXME table missing
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List options;
+  /**
+   * Include Paths. Defaults to "${sourceDirectory}/include"
+   */
+  @Parameter
+  private List<IncludePath> includePaths;
 
-    /**
-     * Additional options for the compiler when running in the nar-testCompile phase.
-     * 
-     * @parameter default-value=""
-     */
-    private List testOptions;
+  /**
+   * Test Include Paths. Defaults to "${testSourceDirectory}/include"
+   */
+  @Parameter
+  private List<IncludePath> testIncludePaths;
 
-	/**
-	 * Options for the compiler as a whitespace separated list. Will work in
-	 * combination with &lt;options&gt;.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String optionSet;
+  /**
+   * System Include Paths, which are added at the end of all include paths
+   */
+  @Parameter
+  private List<String> systemIncludePaths;
 
-	/**
-	 * Clears default options
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean clearDefaultOptions;
+  /**
+   * Additional options for the C++ compiler Defaults to Architecture-OS-Linker
+   * specific values. FIXME table missing
+   */
+  @Parameter
+  private List<String> options;
 
-	/**
-	 * Comma separated list of filenames to compile in order
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String compileOrder;
+  /**
+   * Additional options for the compiler when running in the nar-testCompile
+   * phase.
+   */
+  @Parameter
+  private List<String> testOptions;
+
+  /**
+   * Options for the compiler as a whitespace separated list. Will work in
+   * combination with &lt;options&gt;.
+   */
+  @Parameter
+  private String optionSet;
+
+  /**
+   * Clears default options
+   */
+  @Parameter(required = true)
+  private boolean clearDefaultOptions;
+
+  /**
+   * Comma separated list of filenames to compile in order
+   */
+  @Parameter
+  private String compileOrder;
 
 	private AbstractCompileMojo mojo;
 

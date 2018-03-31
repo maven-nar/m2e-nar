@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Sets up a test to create
@@ -34,36 +35,46 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class Test implements ITest {
 
-	/**
-	 * Name of the test to create
-	 * 
-	 * @required
-	 * @parameter default-value=""
-	 */
-	private String name = null;
+  /**
+   * Name of the test to create
+   */
+  @Parameter(required = true)
+  private String name = null;
 
-	/**
-	 * Type of linking used for this test Possible choices are: "shared" or
-	 * "static". Defaults to "shared".
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String link = ILibrary.SHARED;
+  /**
+   * Type of linking to main artifact used for this test.
+   * Possible choices are: "shared" or "static".
+   * Defaults to library type if single library is built or "shared" otherwise.
+   */
+  @Parameter(defaultValue = "shared")
+  private String link = null;
 
-	/**
-	 * When true run this test. Defaults to true;
-	 * 
-	 * @parameter expresssion=""
-	 */
-	private boolean run = true;
+  /**
+   * When true run this test. Defaults to true;
+   */
+  @Parameter(defaultValue = "true")
+  private boolean run = true;
 
-	/**
-	 * Arguments to be used for running this test. Defaults to empty list. This
-	 * option is only used if run=true.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List/* <String> */args = new ArrayList();
+  /**
+   * Type of the library to generate. 
+   * Possible choices are: "shared", "static" or "executable".
+   * Defaults to "executable".
+   */
+  @Parameter
+  private String type = Library.EXECUTABLE;
+  
+  /**
+   * Arguments to be used for running this test. Defaults to empty list. This
+   * option is only used if run=true.
+   */
+  @Parameter
+  private List/* <String> */args = new ArrayList();
+
+  /**
+   * List of artifact:binding  for type of dependency to link against when there is a choice.
+   */
+  @Parameter
+  private List<String> dependencyBindings = new ArrayList<String>();
 
 	public final String getName() throws MojoFailureException {
 		if (name == null) {
@@ -72,15 +83,38 @@ public class Test implements ITest {
 		return name;
 	}
 
-	public final String getLink() {
-		return link;
-	}
-
+  public final String getLink( List<ILibrary> libraries ) {
+    if( this.link != null )
+      return this.link;
+    
+    String libraryPreferred = null;
+    if(libraries.size() == 1){
+      String type = libraries.get(0).getType();
+      if (Library.SHARED.equals(type)||Library.STATIC.equals(type) )
+        libraryPreferred = type;
+      //if(Library.JNI.equals(type)) default shared
+    }
+    return libraryPreferred == null ? Library.SHARED : libraryPreferred; 
+  }
+  
 	public final boolean shouldRun() {
 		return run;
 	}
 
-	public final List/* <String> */getArgs() {
-		return args;
-	}
+  @Override
+  public final List/* <String> */getArgs() {
+    return this.args;
+  }
+
+  public String getBinding(NarArtifact dependency) {
+    for (String dependBind : dependencyBindings ) {
+      String[] pair = dependBind.trim().split( ":", 2 );  // TODO: match how much?
+      if( dependency.getArtifactId().equals(pair[0].trim()) ){
+        String result = pair[1].trim();
+        if( !result.isEmpty() )
+          return result;
+      }
+    }
+    return null;
+  }
 }

@@ -28,6 +28,8 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 
 /**
  * Compiles native source files.
@@ -41,6 +43,13 @@ import org.apache.maven.execution.MavenSession;
  */
 public class NarCompileMojo extends AbstractCompileMojo
 {
+  /**
+   * Specify that the final manifest should be embedded in the output (default
+   * true) or false for side by side.
+   */
+  @Parameter(property = "nar.embedManifest", defaultValue = "true")
+  protected boolean embedManifest = true;
+
     /**
      * The current build session instance.
      * 
@@ -50,14 +59,14 @@ public class NarCompileMojo extends AbstractCompileMojo
      */
     protected MavenSession session;
 
-	protected List<Artifact> getArtifacts() {
-		final Set<Artifact> artifacts = getMavenProject().getArtifacts();
-		List<Artifact> returnArtifact = new ArrayList<Artifact>();
-		for (Artifact a : artifacts) {
-			if (Artifact.SCOPE_COMPILE.equals(a.getScope()) || Artifact.SCOPE_PROVIDED.equals(a.getScope()) || Artifact.SCOPE_SYSTEM.equals(a.getScope())) {
-				returnArtifact.add(a);
-			}
-		}
-		return returnArtifact;
-	}
+  /**
+   * List the dependencies needed for compilation, those dependencies are used
+   * to get the include paths needed for
+   * compilation and to get the libraries paths and names needed for linking.
+   */
+  @Override
+  protected ScopeFilter getArtifactScopeFilter() {
+    return new ScopeFilter(Artifact.SCOPE_COMPILE, null);
+  }
+
 }

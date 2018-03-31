@@ -26,7 +26,9 @@ import java.util.List;
  */
 public interface Executable {
 
-	boolean shouldRun();
+  List/* <String> */getArgs();
+  String getBinding(NarArtifact dependency);
 
-	List/* <String> */getArgs();
+  boolean shouldRun();
+	  
 }

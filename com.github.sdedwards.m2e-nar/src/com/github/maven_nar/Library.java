@@ -25,6 +25,8 @@ package com.github.maven_nar;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.plugins.annotations.Parameter;
+
 /**
  * Sets up a library to create
  * 
@@ -32,83 +34,79 @@ import java.util.List;
  */
 public class Library implements Executable, ILibrary {
 
-	/**
-	 * Type of the library to generate. Possible choices are: "plugin",
-	 * "shared", "static", "jni" or "executable". Defaults to "shared".
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String type = SHARED;
+  /**
+   * Type of the library to generate. Possible choices are: "plugin", "shared",
+   * "static", "jni" or "executable".
+   * Defaults to "shared".
+   */
+  @Parameter
+  private String type = SHARED;
 
-	/**
-	 * Type of subsystem to generate: "gui", "console", "other". Defaults to
-	 * "console".
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String subSystem = "console";
+  /**
+   * Type of subsystem to generate: "gui", "console", "other". Defaults to
+   * "console".
+   */
+  @Parameter
+  private String subSystem = "console";
 
-	/**
-	 * Link with stdcpp if necessary Defaults to true.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private boolean linkCPP = true;
+  /**
+   * Link with stdcpp if necessary Defaults to true.
+   */
+  @Parameter(defaultValue = "true")
+  private boolean linkCPP = true;
 
-	/**
-	 * Link with fortran runtime if necessary Defaults to false.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private boolean linkFortran = false;
+  /**
+   * Link with fortran runtime if necessary Defaults to false.
+   */
+  @Parameter
+  private boolean linkFortran = false;
 
-	/**
-	 * Link with fortran startup, so that the gcc linker can find the "main" of
-	 * fortran. Defaults to false.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private boolean linkFortranMain = false;
+  /**
+   * Link with fortran startup, so that the gcc linker can find the "main" of
+   * fortran. Defaults to false.
+   */
+  @Parameter
+  private boolean linkFortranMain = false;
 
-	/**
-	 * If specified will create the NarSystem class with methods to load a JNI
-	 * library.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String narSystemPackage = null;
+  /**
+   * If specified will create the NarSystem class with methods to load a JNI
+   * library.
+   */
+  @Parameter
+  private String narSystemPackage = null;
 
-	/**
-	 * Name of the NarSystem class
-	 * 
-	 * @parameter default-value="NarSystem"
-	 * @required
-	 */
-	private String narSystemName = "NarSystem";
+  /**
+   * Name of the NarSystem class
+   */
+  @Parameter(defaultValue = "NarSystem", required = true)
+  private String narSystemName = "NarSystem";
 
-	/**
-	 * The target directory into which to generate the output.
-	 * 
-	 * @parameter default-value="${project.build.dir}/nar/nar-generated"
-	 * @required
-	 */
-	private String narSystemDirectory = "nar-generated";
+  /**
+   * The target directory into which to generate the output.
+   */
+  @Parameter(defaultValue = "${project.build.dir}/nar/nar-generated", required = true)
+  private String narSystemDirectory = "nar-generated";
 
-	/**
-	 * When true and if type is "executable" run this executable. Defaults to
-	 * false;
-	 * 
-	 * @parameter default-value=""
-	 */
-	private boolean run = false;
+  /**
+   * When true and if type is "executable" run this executable. Defaults to
+   * false;
+   */
+  @Parameter
+  private boolean run = false;
 
-	/**
-	 * Arguments to be used for running this executable. Defaults to empty list.
-	 * This option is only used if run=true and type=executable.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List/* <String> */args = new ArrayList();
+  /**
+   * Arguments to be used for running this executable. Defaults to empty list.
+   * This option is only used if run=true
+   * and type=executable.
+   */
+  @Parameter
+  private List/* <String> */args = new ArrayList();
+
+  /**
+   * List of artifact:binding  for type of dependency to link against when there is a choice.
+   */
+  @Parameter
+  private List<String> dependencyBindings = new ArrayList<String>();
 
 	/*
 	 * (non-Javadoc)
@@ -142,6 +140,18 @@ public class Library implements Executable, ILibrary {
 	public final List/* <String> */getArgs() {
 		return args;
 	}
+
+  public String getBinding(NarArtifact dependency) {
+    for (String dependBind : dependencyBindings ) {
+      String[] pair = dependBind.trim().split( ":", 2 );
+      if( dependency.getArtifactId().equals(pair[0].trim()) ){
+        String result = pair[1].trim();
+        if( !result.isEmpty() )
+          return result;
+      }
+    }
+    return null;
+  }
 
 	public final String getNarSystemName() {
 		return narSystemName;

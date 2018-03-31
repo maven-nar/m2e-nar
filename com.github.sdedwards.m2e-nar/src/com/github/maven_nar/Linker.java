@@ -38,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
 
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Linker tag
@@ -46,115 +47,141 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class Linker implements ILinker {
 
-	/**
-	 * The Linker Some choices are: "msvc", "g++", "CC", "icpc", ... Default is
-	 * Architecture-OS-Linker specific: FIXME: table missing
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String name;
+  /**
+   * The Linker Some choices are: "msvc", "g++", "CC", "icpc", ... Default is
+   * Architecture-OS-Linker specific: FIXME:
+   * table missing
+   */
+  @Parameter
+  private String name;
 
-	/**
-	 * Path location of the linker tool
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String toolPath;
+  /**
+   * The prefix for the linker.
+   */
+  @Parameter
+  private String prefix;
 
-	/**
-	 * Enables or disables incremental linking.
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean incremental = false;
+  /**
+   * Path location of the linker tool
+   */
+  @Parameter
+  private String toolPath;
 
-	/**
-	 * Enables or disables the production of a map file.
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean map = false;
+  /**
+   * Enables or disables incremental linking.
+   */
+  @Parameter(required = true)
+  private boolean incremental = false;
 
-	/**
-	 * Options for the linker Defaults to Architecture-OS-Linker specific
-	 * values. FIXME table missing
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List options;
+  /**
+   * Enables or disables the production of a map file.
+   */
+  @Parameter(required = true)
+  private boolean map = false;
 
-    /**
-     * Additional options for the linker when running in the nar-testCompile phase.
-     * 
-     * @parameter default-value=""
-     */
-    private List testOptions;
+  @Parameter(required = true)
+  private boolean skipDepLink = false;
+  
+  /**
+   * Options for the linker Defaults to Architecture-OS-Linker specific values.
+   * FIXME table missing
+   */
+  @Parameter
+  private List options;
 
-	/**
-	 * Options for the linker as a whitespace separated list. Defaults to
-	 * Architecture-OS-Linker specific values. Will work in combination with
-	 * &lt;options&gt;.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String optionSet;
+  /**
+   * Additional options for the linker when running in the nar-testCompile
+   * phase.
+   * 
+   */
+  @Parameter
+  private List testOptions;
 
-	/**
-	 * Clears default options
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean clearDefaultOptions;
+  /**
+   * Options for the linker as a whitespace separated list. Defaults to
+   * Architecture-OS-Linker specific values. Will
+   * work in combination with &lt;options&gt;.
+   */
+  @Parameter
+  private String optionSet;
 
-	/**
-	 * Adds libraries to the linker.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List/* <Lib> */libs;
+  /**
+   * Clears default options
+   */
+  @Parameter(required = true)
+  private boolean clearDefaultOptions;
 
-	/**
-	 * Adds libraries to the linker. Will work in combination with &lt;libs&gt;.
-	 * The format is comma separated, colon-delimited values (name:type:dir),
-	 * like "myLib:shared:/home/me/libs/, otherLib:static:/some/path".
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String libSet;
+  /**
+   * Adds libraries to the linker.
+   */
+  @Parameter
+  private List/* <Lib> */ libs;
 
-	/**
-	 * Adds system libraries to the linker.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List/* <SysLib> */sysLibs;
+  /**
+   * Adds libraries to the linker. Will work in combination with &lt;libs&gt;.
+   * The format is comma separated,
+   * colon-delimited values (name:type:dir), like
+   * "myLib:shared:/home/me/libs/, otherLib:static:/some/path".
+   */
+  @Parameter
+  private String libSet;
 
-	/**
-	 * Adds system libraries to the linker. Will work in combination with
-	 * &lt;sysLibs&gt;. The format is comma separated, colon-delimited values
-	 * (name:type), like "dl:shared, pthread:shared".
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String sysLibSet;
+  /**
+   * Adds system libraries to the linker.
+   */
+  @Parameter
+  private List/* <SysLib> */ sysLibs;
 
-	/**
-	 * <p>
-	 * Specifies the link ordering of libraries that come from nar dependencies.
-	 * The format is a comma separated list of dependency names, given as
-	 * groupId:artifactId.
-	 * </p>
-	 * <p>
-	 * Example: &lt;narDependencyLibOrder&gt;someGroup:myProduct,
-	 * other.group:productB&lt;narDependencyLibOrder&gt;
-	 * </p>
-	 * 
-	 * @parameter default-value=""
-	 */
-	private String narDependencyLibOrder;
+  /**
+   * Adds system libraries to the linker. Will work in combination with
+   * &lt;sysLibs&gt;. The format is comma
+   * separated, colon-delimited values (name:type), like
+   * "dl:shared, pthread:shared".
+   */
+  @Parameter
+  private String sysLibSet;
+
+  /**
+   * <p>
+   * Specifies the link ordering of libraries that come from nar dependencies.
+   * The format is a comma separated list of dependency names, given as
+   * groupId:artifactId.
+   * </p>
+   * <p>
+   * Example: &lt;narDependencyLibOrder&gt;someGroup:myProduct,
+   * other.group:productB&lt;narDependencyLibOrder&gt;
+   * </p>
+   */
+  @Parameter
+  private String narDependencyLibOrder;
+
+  /**
+   * <p>
+   * Specifies to use Default link ordering of libraries that come from mvn dependency tree.
+   * The Default link order (generated by nar) is a Level-order tree traversing list (also called BFS) of
+   * dependency tree, given as a comma separated list of groupId:artifactId.
+   * </p>
+   * <p>
+   *  default Value is "false"
+   * </p>
+   */
+  @Parameter(defaultValue = "false")
+  private boolean narDefaultDependencyLibOrder = false;
+  
+  /**
+   * Specifies that if using default dependency lib order then turn on/off logic that pushes
+   * dependencies to appropriate place in linker line based on transitive dependencies.
+   * @since 3.5.2
+   */
+  @Parameter(defaultValue = "false")
+  protected boolean pushDepsToLowestOrder = false;
+
+  /**
+   * Specify that the linker should generate an intermediate manifest based on
+   * the inputs.
+   */
+  @Parameter(property = "nar.generateManifest", defaultValue = "true")
+  private boolean generateManifest = true;
 
 	private final Log log;
 

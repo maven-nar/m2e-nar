@@ -29,9 +29,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.github.sdedwards.m2e_nar.internal.cdt.CdtUtils;
 
@@ -40,111 +40,114 @@ import com.github.sdedwards.m2e_nar.internal.cdt.CdtUtils;
  */
 public abstract class AbstractCompileMojo extends AbstractDependencyMojo implements INarCompileMojo {
 
-	/**
-	 * C++ Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private Cpp cpp;
+  /**
+   * C++ Compiler
+   */
+  @Parameter
+  private Cpp cpp;
 
-	/**
-	 * C Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private C c;
+  /**
+   * C Compiler
+   */
+  @Parameter
+  private C c;
 
-	/**
-	 * Fortran Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private Fortran fortran;
+  /**
+   * Fortran Compiler
+   */
+  @Parameter
+  private Fortran fortran;
 
-	/**
-	 * Resource Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private Resource resource;
+  /**
+   * Resource Compiler
+   */
+  @Parameter
+  private Resource resource;
 
-	/**
-	 * IDL Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private IDL idl;
+  /**
+   * IDL Compiler
+   */
+  @Parameter
+  private IDL idl;
 
-	/**
-	 * Message Compiler
-	 * 
-	 * @parameter default-value=""
-	 */
-	private Message message;
+  /**
+   * Message Compiler
+   */
+  @Parameter
+  private Message message;
 
-	/**
-	 * By default NAR compile will attempt to compile using all known compilers
-	 * against files in the directories specified by convention. This allows
-	 * configuration to a reduced set, you will have to specify each compiler to
-	 * use in the configuration.
-	 * 
-	 * @parameter default-value="false"
-	 */
-	protected boolean onlySpecifiedCompilers;
+  /**
+   * By default NAR compile will attempt to compile using all known compilers
+   * against files in the directories specified by convention.
+   * This allows configuration to a reduced set, you will have to specify each
+   * compiler to use in the configuration.
+   */
+  @Parameter(defaultValue = "false")
+  protected boolean onlySpecifiedCompilers;
 
-	/**
-	 * Maximum number of Cores/CPU's to use. 0 means unlimited.
-	 * 
-	 * @parameter default-value=""
-	 */
-	private int maxCores = 0;
+  /**
+   * Do we log commands that is executed to produce the end-result?
+   * Conception was to allow eclipse to sniff out include-paths from compile.
+   */
+  @Parameter
+  protected int commandLogLevel = 3;
 
-	/**
-	 * Fail on compilation/linking error.
-	 * 
-	 * @parameter default-value="true"
-	 * @required
-	 */
-	private boolean failOnError;
+  /**
+   * Maximum number of Cores/CPU's to use. 0 means unlimited.
+   */
+  @Parameter
+  private int maxCores = 0;
 
-	/**
-	 * Sets the type of runtime library, possible values "dynamic", "static".
-	 * 
-	 * @parameter default-value="dynamic"
-	 * @required
-	 */
-	private String runtime;
+  /**
+   * Fail on compilation/linking error.
+   */
+  @Parameter(defaultValue = "true", required = true)
+  private boolean failOnError;
 
-	/**
-	 * Set use of libtool. If set to true, the "libtool " will be prepended to
-	 * the command line for compatible processors.
-	 * 
-	 * @parameter default-value="false"
-	 * @required
-	 */
-	private boolean libtool;
+  /**
+   * Sets the type of runtime library, possible values "dynamic", "static".
+   */
+  @Parameter(defaultValue = "dynamic", required = true)
+  private String runtime;
 
-	/**
-	 * List of tests to create
-	 * 
-	 * @parameter default-value=""
-	 */
-	private List tests;
+  /**
+   * Set use of libtool. If set to true, the "libtool " will be prepended to the
+   * command line for compatible
+   * processors.
+   */
+  @Parameter(defaultValue = "false", required = true)
+  private boolean libtool;
 
-	/**
-	 * Java info for includes and linking
-	 * 
-	 * @parameter default-value=""
-	 */
-	private Java java;
+  /**
+   * List of tests to create
+   */
+  @Parameter
+  private List tests;
 
-	/**
-	 * Flag to cpptasks to indicate whether linker options should be decorated
-	 * or not
-	 * 
-	 * @parameter default-value=""
-	 */
-	protected boolean decorateLinkerOptions;
+  /**
+   * Java info for includes and linking
+   */
+  @Parameter
+  private Java java;
+
+  /**
+   * To support scanning the code with HPE Fortify.
+   * <p>
+   * The attribute functions as a flag that indicates Fortify is required,
+   * and the value is an ID, prepended to the command line as
+   * {@code sourceanalyzer –b <fortifyID>}.
+   * </p>
+   */
+  @Parameter(defaultValue = "")
+  private String fortifyID;
+
+  
+  /**
+   * Flag to cpptasks to indicate whether linker options should be decorated or
+   * not
+   */
+  @Parameter
+  protected boolean decorateLinkerOptions;
 
 	private NarInfo narInfo;
 
@@ -412,7 +415,8 @@ public abstract class AbstractCompileMojo extends AbstractDependencyMojo impleme
 		List libraries = new ArrayList();
 		if (test != null) {
 			// Add the library of this package if it exists
-			final String linkType = test.getLink();
+			List<ILibrary> myLibs = new ArrayList<ILibrary>(getLibraries());
+			final String linkType = test.getLink(myLibs);
 			getLog().debug("Test: " + test.getName() + ", link: " + linkType);
 			boolean found = false;
 			for (Library lib : getLibraries()) {
@@ -423,7 +427,7 @@ public abstract class AbstractCompileMojo extends AbstractDependencyMojo impleme
 			}
 			if (found) {
 				getLog().debug("Adding " + linkType + " library for test " + test.getName());
-				final File dir = new File(getMavenProject().getBasedir(), CdtUtils.DEFAULT_CONFIG_NAME_PREFIX + test.getLink());
+				final File dir = new File(getMavenProject().getBasedir(), CdtUtils.DEFAULT_CONFIG_NAME_PREFIX + test.getLink(myLibs));
 				final Lib library = new Lib();
 				library.setName(getOutput(linkType));
 				library.setDirectory(dir);
