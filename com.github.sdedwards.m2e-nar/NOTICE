@@ -1,7 +1,15 @@
 NAR Maven Plugin Integration for Eclipse
-Copyright 2015 Stephen Edwards
+Copyright 2015-2018 Stephen Edwards
 
 Portions of this code -- specifically, most of the com.github.maven_nar
 package -- were adapted from the nar-maven-plugin open source project
 (http://maven-nar.github.io/)
 
+Maven Plugin Java 5 Annotations
+Copyright 2004-2012 The Apache Software Foundation
+
+Maven Common Artifact Filters
+Copyright 2002-2011 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).

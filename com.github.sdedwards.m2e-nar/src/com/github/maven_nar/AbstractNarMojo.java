@@ -32,6 +32,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -42,49 +43,45 @@ public abstract class AbstractNarMojo
     implements NarConstants
 {
 
-    /**
-     * Skip running of NAR plugins (any) altogether.
-     * 
-     * @parameter property="nar.skip" default-value="false"
-     */
-    private boolean skip;
+  /**
+   * Skip running of NAR plugins (any) altogether.
+   */
+  @Parameter(property = "nar.skip", defaultValue = "false")
+  protected boolean skip;
 
-    /**
-     * Skip the tests. Listens to Maven's general 'maven.skip.test'.
-     * 
-     * @parameter property="maven.test.skip"
-     */
-    boolean skipTests;
+  /**
+   * Skip the tests. Listens to Maven's general 'maven.skip.test'.
+   */
+  @Parameter(property = "maven.test.skip")
+  boolean skipTests;
 
-    /**
-     * Ignore errors and failures.
-     * 
-     * @parameter property="nar.ignore" default-value="false"
-     */
-    private boolean ignore;
+  /**
+   * Ignore errors and failures.
+   */
+  @Parameter(property = "nar.ignore", defaultValue = "false")
+  private boolean ignore;
 
-    /**
-     * The Architecture for the nar, Some choices are: "x86", "i386", "amd64", "ppc", "sparc", ... Defaults to a derived
-     * value from ${os.arch}
-     * 
-     * @parameter property="nar.arch"
-     */
-    private String architecture;
+  /**
+   * The Architecture for the nar, Some choices are: "x86", "i386", "amd64",
+   * "ppc", "sparc", ... Defaults to a derived
+   * value from ${os.arch}
+   */
+  @Parameter(property = "nar.arch")
+  private String architecture;
 
-    /**
-     * The Operating System for the nar. Some choices are: "Windows", "Linux", "MacOSX", "SunOS", ... Defaults to a
-     * derived value from ${os.name} FIXME table missing
-     * 
-     * @parameter property="nar.os"
-     */
-    private String os;
+  /**
+   * The Operating System for the nar. Some choices are: "Windows", "Linux",
+   * "MacOSX", "SunOS","AIX" ... Defaults to a
+   * derived value from ${os.name} FIXME table missing
+   */
+  @Parameter(property = "nar.os")
+  private String os;
 
-    /**
-     * Architecture-OS-Linker name. Defaults to: arch-os-linker.
-     * 
-     * @parameter default-value=""
-     */
-    private String aol;
+  /**
+   * Architecture-OS-Linker name. Defaults to: arch-os-linker.
+   */
+  @Parameter(defaultValue = "")
+  private String aol;
 
     /**
      * Additional classifier suffix. Defaults to: ""
@@ -93,99 +90,93 @@ public abstract class AbstractNarMojo
      */
     private String aolSuffix;
 
-    /**
-     * Linker
-     * 
-     * @parameter default-value=""
-     */
-    private Linker linker;
+  /**
+   * Linker
+   */
+  @Parameter
+  private Linker linker;
+
+  // these could be obtained from an injected project model.
+
+  @Parameter(property = "project.build.directory", readonly = true)
+  private File outputDirectory;
+
+  @Parameter(property = "project.build.outputDirectory", readonly = true)
+  protected File classesDirectory;
+
+  /**
+   * Name of the output
+   * - for jni default-value="${project.artifactId}-${project.version}"
+   * - for libs default-value="${project.artifactId}-${project.version}"
+   * - for exe default-value="${project.artifactId}"
+   * -- for tests default-value="${test.name}"
+   * 
+   */
+  @Parameter
+  private String output;
+
+  @Parameter(property = "project.basedir", readonly = true)
+  private File baseDir;
+
+  /**
+   * Target directory for Nar file construction. Defaults to
+   * "${project.build.directory}/nar" for "nar-compile" goal
+   */
+  @Parameter
+  private File targetDirectory;
+
+  /**
+   * Target directory for Nar test construction. Defaults to
+   * "${project.build.directory}/test-nar" for "nar-testCompile" goal
+   */
+  @Parameter
+  private File testTargetDirectory;
+
+  /**
+   * Target directory for Nar file unpacking. Defaults to "${targetDirectory}"
+   */
+  @Parameter
+  private File unpackDirectory;
+
+  /**
+   * Target directory for Nar test unpacking. Defaults to
+   * "${testTargetDirectory}"
+   */
+  @Parameter
+  private File testUnpackDirectory;
 
     /**
-     * @parameter property="project.build.directory"
-     * @readonly
-     */
-    private File outputDirectory;
-
-    /**
-	 * @parameter property="project.build.outputDirectory"
-	 * @readonly
-	 */
-    protected File classesDirectory;
-
-    /**
-     * Name of the output
-     *  - for jni default-value="${project.artifactId}-${project.version}"
-     *  - for libs default-value="${project.artifactId}-${project.version}"
-     *  - for exe default-value="${project.artifactId}"
-     *  -- for tests default-value="${test.name}"
-     * 
-     * @parameter 
-     */
-    private String output;
-
-    /**
-     * @parameter property="project.basedir"
-     * @readonly
-     */
-    private File baseDir;
-
-    /**
-     * @parameter property="project.build.finalName"
-     * @readonly
-     */
-    private String finalName;
-
-    /**
-     * Target directory for Nar file construction. Defaults to "${project.build.directory}/nar" for "nar-compile" goal
-     * 
-     * @parameter default-value=""
-     */
-    private File targetDirectory;
-
-    /**
-     * Target directory for Nar test construction. Defaults to "${project.build.directory}/test-nar" for "nar-testCompile" goal
-     * 
-     * @parameter default-value=""
-     */
-    private File testTargetDirectory;
-
-    /**
-     * Target directory for Nar file unpacking. Defaults to "${targetDirectory}"
-     * 
-     * @parameter default-value=""
-     */
-    private File unpackDirectory;
-
-    /**
-     * Target directory for Nar test unpacking. Defaults to "${testTargetDirectory}"
-     * 
-     * @parameter default-value=""
-     */
-    private File testUnpackDirectory;
-
-    /**
-     * List of classifiers which you want download/unpack/assemble 
-     * Example ppc-MacOSX-g++, x86-Windows-msvc, i386-Linux-g++.
-     * Not setting means all.
-     * 
-     * @parameter default-value=""
-     */
-    protected List<String> classifiers;
-
-    /**
-     * List of libraries to create
+     * NARVersionInfo for Windows binaries
      *
-     * @parameter default-value=""
      */
-    protected List<Library> libraries;
+    //@Parameter
+    //private NARVersionInfo versionInfo;
 
-    /**
-     * Layout to be used for building and unpacking artifacts
-     * 
-     * @parameter property="nar.layout" default-value="com.github.maven_nar.NarLayout21"
-     * @required
-     */
-    private String layout;
+  /**
+   * List of classifiers which you want download/unpack/assemble
+   * Example ppc-MacOSX-g++, x86-Windows-msvc, i386-Linux-g++.
+   * Not setting means all.
+   */
+  @Parameter
+  protected List<String> classifiers;
+
+  /**
+   * List of libraries to create
+   */
+  @Parameter
+  protected List<Library> libraries;
+
+  /**
+   * Name of the libraries included
+   */
+  @Parameter
+  private String libsName;
+
+  /**
+   * Layout to be used for building and unpacking artifacts
+   */
+  @Parameter(property = "nar.layout", defaultValue = "com.github.maven_nar.NarLayout21", required = true)
+  private String layout;
     
     private NarLayout narLayout;
 
@@ -312,11 +303,6 @@ public abstract class AbstractNarMojo
     protected final File getOutputDirectory()
     {
         return outputDirectory;
-    }
-
-    protected final String getFinalName()
-    {
-        return finalName;
     }
 
     protected final File getTargetDirectory()
