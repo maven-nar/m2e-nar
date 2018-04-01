@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: m2e-nar-test
 Bundle-SymbolicName: com.github.sdedwards.m2e-nar.test
-Bundle-Version: 1.0.5.qualifier
+Bundle-Version: 1.0.6.qualifier
 Bundle-Vendor: sdedwards
 Fragment-Host: com.github.sdedwards.m2e-nar;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
